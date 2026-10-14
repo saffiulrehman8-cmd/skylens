@@ -1,0 +1,12 @@
+.env
+.env.local
+.env.production
+node_modules/
+logs/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.netlify/

@@ -1,0 +1,48 @@
+/* ── Learn topic pages · premium pass ──
+   Each page sets its own accent on <html style="--topic:...">.
+   Replaces the old teal on these pages only. */
+:root{--teal:var(--topic,#68b0e4)}
+
+/* Hero */
+.ab2-eyebrow{display:flex;align-items:center;gap:10px;font-size:var(--fs-label);letter-spacing:.16em;color:rgba(255,255,255,.6)}
+.ab2-eyebrow::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--topic);box-shadow:0 0 10px var(--topic);flex-shrink:0}
+.ab2-headline{font-size:var(--fs-display);letter-spacing:-.02em;line-height:1.08}
+.ab2-tagline{color:rgba(255,255,255,.66);font-size:var(--fs-body-l)}
+
+/* Cards: rounder, with a thin accent edge */
+.data-card.acrylic,.quiz-section.acrylic,.sth-nav-btn.acrylic{border-radius:22px}
+.data-card.acrylic::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--topic),transparent);opacity:.85;pointer-events:none}
+.sth-grid,.sth-col{gap:1.25rem}
+.data-card h4{font-size:var(--fs-small);letter-spacing:.01em}
+.data-table td{font-size:var(--fs-small);padding:.55rem .4rem;border-bottom-color:rgba(255,255,255,.07)}
+.data-table tr[onclick]:hover td{color:var(--text-hi)}
+.sth-info p{font-size:var(--fs-body);line-height:1.8;color:rgba(255,255,255,.76)}
+
+/* Fact callouts */
+.fact.acrylic{border-radius:16px;border-left:3px solid var(--topic);line-height:1.75}
+
+/* Quiz */
+.quiz-section.acrylic{padding:2rem}
+.quiz-q{font-size:var(--fs-body-l);line-height:1.4;margin-bottom:1.2rem}
+.quiz-opt{border-radius:14px;padding:.8rem 1rem;font-size:var(--fs-small)}
+.quiz-opt:hover:not([disabled]){border-color:var(--topic)}
+
+/* Prev / Next + back */
+.sth-nav-btn.acrylic{padding:1.2rem 1.5rem;transition:border-color .25s,transform .25s}
+.sth-nav-btn.acrylic:hover{border-color:var(--topic);transform:translateY(-2px)}
+.sth-nav-name{font-size:var(--fs-h4)}
+.ab2-btn.ab2-btn-secondary{border-radius:14px}
+
+@media (prefers-reduced-motion:reduce){.sth-nav-btn.acrylic:hover{transform:none}}
+
+/* Phone: tighter gutters, no clipped cards or quiz options */
+@media (max-width:700px){
+  .sth-grid{grid-template-columns:minmax(0,1fr);padding:0 1.1rem 1.5rem}
+  .sth-col{min-width:0}
+  .sth-quiz-wrap,.sth-nav{padding:0 1.1rem 1.4rem}
+  .sth-back-wrap{padding:0 1.1rem 2rem}
+  .quiz-opts{grid-template-columns:1fr}
+  .sth-nav{gap:.6rem}
+  .sth-nav-btn{min-width:0;padding:.9rem .8rem;gap:.5rem}
+  .sth-nav-name{font-size:.82rem;overflow-wrap:anywhere}
+}

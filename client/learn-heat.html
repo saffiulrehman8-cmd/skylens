@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" style="--topic:var(--storm);--page-glow:#d79079">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="skyLens — Heat Waves &amp; Urban Heat. Why cities run hotter, and the physics of the urban heat island effect.">
+<meta name="theme-color" content="#05091a">
+<link rel="manifest" href="/manifest.json">
+<title>Heat Waves &amp; Urban Heat · skyLens Archive</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234a8cc4'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='white'>☁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/learn-topic.css">
+<link rel="stylesheet" href="/css/premium.css">
+</head>
+<body>
+
+<div class="dbp-bg" style="background-image:url('/assets/images/heat-bg.webp')"></div>
+
+<nav class="site-sidebar" aria-label="Main navigation">
+  <a href="index.html" class="logo-mark" aria-label="skyLens home"><i class="fas fa-meteor"></i></a>
+  <a href="index.html" class="site-nav-icon" aria-label="Hub"><i class="fas fa-house"></i><span class="snl">Hub</span></a>
+  <a href="dashboard.html" class="site-nav-icon" aria-label="Dashboard"><i class="fas fa-gauge-high"></i><span class="snl">Dashboard</span></a>
+  <a href="learn.html" class="site-nav-icon act" aria-current="page" aria-label="Learn"><i class="fas fa-book-open"></i><span class="snl">Learn</span></a>
+  <a href="about.html" class="site-nav-icon" aria-label="About"><i class="fas fa-circle-info"></i><span class="snl">About</span></a>
+  <div class="site-sidebar-spacer"></div>
+  <div class="site-sidebar-bottom">
+    <button class="site-nav-icon" id="authHeaderBtn" onclick="openAuthModal('login')" aria-label="Log in or sign up"><i class="fas fa-user"></i></button>
+  </div>
+</nav>
+
+<div class="page-shell">
+
+  <section class="ab2-hero">
+    <div>
+      <div class="ab2-eyebrow">// Meteorological Archive · Topic 11 of 13</div>
+      <h1 class="ab2-headline">Heat Waves &amp;<br>Urban Heat</h1>
+      <p class="ab2-tagline">Why concrete cities run hotter than the countryside around them.</p>
+    </div>
+    <aside class="data-card acrylic" aria-label="Related topics">
+      <h4>Related Topics</h4>
+      <table class="data-table">
+        <tr onclick="location.href='learn-climate.html'"><td><i class="fas fa-temperature-arrow-up" style="color:var(--gold);width:18px"></i> Climate Anomalies</td><td><i class="fas fa-arrow-right" style="color:var(--muted)"></i></td></tr>
+        <tr onclick="location.href='learn-storms.html'"><td><i class="fas fa-bolt" style="color:var(--storm);width:18px"></i> Severe Storms</td><td><i class="fas fa-arrow-right" style="color:var(--muted)"></i></td></tr>
+        <tr onclick="location.href='learn-localwind.html'"><td><i class="fas fa-compass" style="color:var(--teal);width:18px"></i> Local Wind Systems</td><td><i class="fas fa-arrow-right" style="color:var(--muted)"></i></td></tr>
+      </table>
+    </aside>
+  </section>
+
+  <div class="sth-grid">
+    <div class="sth-col">
+      <div class="data-card acrylic sth-info">
+        <p>A heat wave is a prolonged period of abnormally hot weather, typically defined relative to a location's normal climate rather than a fixed global threshold. Extended heat is especially dangerous because the human body struggles to cool itself once both air temperature and humidity stay elevated for consecutive days, particularly overnight when the body normally recovers.</p>
+        <p>Cities intensify this through the <strong>Urban Heat Island effect</strong>: dense asphalt and concrete absorb solar energy and slowly re-release it as heat, while lost vegetation means less natural cooling through shade and evaporation. Waste heat from vehicles and air conditioning adds further warming, and narrow "urban canyons" between tall buildings trap heat that would otherwise disperse.</p>
+      </div>
+      <div class="fact acrylic"><strong>🏙 First Discovery:</strong> Luke Howard documented the urban heat island effect as early as 1833, comparing air temperatures in central London to its surrounding countryside — over 150 years before the term became common.</div>
+    </div>
+    <div class="sth-col">
+      <div class="data-card acrylic">
+        <h4>Heat Island Impact (EPA)</h4>
+        <table class="data-table data-table--metric"><tr><td>Daytime</td><td>+1–7°F</td></tr><tr><td>Nighttime</td><td>+2–5°F</td></tr><tr><td>Peak (calm night)</td><td>up to +22°F</td></tr><tr><td>Cooling demand</td><td>+1.5–2%/°F</td></tr></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sth-quiz-wrap">
+    <div class="quiz-section acrylic" id="quiz-heat">
+      <div class="sec-lbl" style="margin-bottom:.6rem">// Test Your Knowledge</div>
+      <div class="quiz-q" id="qHeatQ">Loading question…</div>
+      <div class="quiz-opts" id="qHeatOpts"></div>
+      <div class="quiz-feedback" id="qHeatFb"></div>
+      <button class="detail-chip acrylic quiz-next" onclick="nextQuiz('heat')" style="margin-top:.5rem"><i class="fas fa-arrow-right"></i>Next Question</button>
+    </div>
+  </div>
+
+  <div class="sth-nav">
+    <a href="learn-hail.html" class="sth-nav-btn acrylic">
+      <i class="fas fa-arrow-left" style="color:var(--muted)"></i>
+      <div><div class="sth-nav-lbl">Previous</div><div class="sth-nav-name">Hail &amp; Precipitation Types</div></div>
+    </a>
+    <a href="learn-aurora.html" class="sth-nav-btn next acrylic">
+      <div><div class="sth-nav-lbl">Next</div><div class="sth-nav-name">Space Weather &amp; Aurora</div></div>
+      <i class="fas fa-arrow-right" style="color:var(--muted)"></i>
+    </a>
+  </div>
+
+  <div class="sth-back-wrap">
+    <a href="learn.html" class="ab2-btn ab2-btn-secondary acrylic"><i class="fas fa-arrow-left"></i> Back to Archive</a>
+  </div>
+
+  <footer class="acrylic">
+    <p>© 2026 skyLens Intelligence · Data by OpenWeather, Open-Meteo &amp; ECMWF · Images by Unsplash</p>
+    <div class="f-links"><a href="/dashboard.html">Dashboard</a><a href="/learn.html">Learn</a><a href="/about.html">About</a></div>
+  </footer>
+
+</div>
+
+<script src="/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="/js/motion.js"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" style="--topic:var(--blue);--page-glow:#88b8c7">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="skyLens — Global Circulation. Hadley and Ferrel cells, trade winds, the jet stream.">
+<meta name="theme-color" content="#05091a">
+<link rel="manifest" href="/manifest.json">
+<title>Global Circulation · skyLens Archive</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234a8cc4'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='white'>☁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/learn-topic.css">
+<link rel="stylesheet" href="/css/premium.css">
+</head>
+<body>
+
+<div class="dbp-bg" style="background-image:url('/assets/images/wind-bg.webp')"></div>
+
+<nav class="site-sidebar" aria-label="Main navigation">
+  <a href="index.html" class="logo-mark" aria-label="skyLens home"><i class="fas fa-meteor"></i></a>
+  <a href="index.html" class="site-nav-icon" aria-label="Hub"><i class="fas fa-house"></i><span class="snl">Hub</span></a>
+  <a href="dashboard.html" class="site-nav-icon" aria-label="Dashboard"><i class="fas fa-gauge-high"></i><span class="snl">Dashboard</span></a>
+  <a href="learn.html" class="site-nav-icon act" aria-current="page" aria-label="Learn"><i class="fas fa-book-open"></i><span class="snl">Learn</span></a>
+  <a href="about.html" class="site-nav-icon" aria-label="About"><i class="fas fa-circle-info"></i><span class="snl">About</span></a>
+  <div class="site-sidebar-spacer"></div>
+  <div class="site-sidebar-bottom">
+    <button class="site-nav-icon" id="authHeaderBtn" onclick="openAuthModal('login')" aria-label="Log in or sign up"><i class="fas fa-user"></i></button>
+  </div>
+</nav>
+
+<div class="page-shell">
+
+  <section class="ab2-hero">
+    <div>
+      <div class="ab2-eyebrow">// Meteorological Archive · Topic 3 of 13</div>
+      <h1 class="ab2-headline">Global<br>Circulation</h1>
+      <p class="ab2-tagline">Jet streams, trade winds, and the Coriolis effect explained.</p>
+    </div>
+    <aside class="data-card acrylic" aria-label="Related topics">
+      <h4>Related Topics</h4>
+      <table class="data-table">
+        <tr onclick="location.href='learn-cyclones.html'"><td><i class="fas fa-hurricane" style="color:var(--gold);width:18px"></i> Tropical Cyclones</td><td><i class="fas fa-arrow-right" style="color:var(--muted)"></i></td></tr>
+        <tr onclick="location.href='learn-monsoon.html'"><td><i class="fas fa-cloud-showers-heavy" style="color:var(--blue);width:18px"></i> Monsoon Systems</td><td><i class="fas fa-arrow-right" style="color:var(--muted)"></i></td></tr>
+        <tr onclick="location.href='learn-storms.html'"><td><i class="fas fa-bolt" style="color:var(--storm);width:18px"></i> Severe Storms</td><td><i class="fas fa-arrow-right" style="color:var(--muted)"></i></td></tr>
+      </table>
+    </aside>
+  </section>
+
+  <div class="sth-grid">
+    <div class="sth-col">
+      <div class="data-card acrylic sth-info">
+        <p>Earth's atmosphere organizes into six large circulation cells driven by differential solar heating. <strong>Hadley Cells</strong> dominate the tropics: warm equatorial air rises, flows poleward, descends at the subtropics creating deserts, and returns as steady <strong>Trade Winds</strong>.</p>
+        <p><strong>Ferrel Cells</strong> (30°–60°) produce the dominant <strong>Westerlies</strong> — the winds steering most mid-latitude weather. The <strong>Coriolis effect</strong> deflects all moving air rightward in the Northern Hemisphere. The polar jet stream meanders at 30,000ft and 320 km/h, guiding entire weather systems across continents.</p>
+      </div>
+      <div class="fact acrylic"><strong>💨 Jet Streams:</strong> Commercial aircraft exploit jet streams to save 2+ hours and significant fuel on transoceanic eastbound flights.</div>
+      <div class="fact acrylic"><strong>🌀 Coriolis Myth:</strong> The Coriolis effect is far too weak to decide which way your bathtub drains — it only meaningfully shapes large-scale systems like cyclones and jet streams, not sink-sized ones.</div>
+    </div>
+    <div class="sth-col">
+      <div class="data-card acrylic">
+        <h4>Circulation Cells</h4>
+        <table class="data-table data-table--metric"><tr><td>Hadley</td><td>0°–30°</td></tr><tr><td>Ferrel</td><td>30°–60°</td></tr><tr><td>Polar</td><td>60°–90°</td></tr></table>
+      </div>
+      <div class="data-card acrylic">
+        <h4>Wind Belts</h4>
+        <table class="data-table data-table--metric"><tr><td>Trade Winds</td><td>0–30° N/S</td></tr><tr><td>Westerlies</td><td>30–60° N/S</td></tr><tr><td>Polar East.</td><td>60–90° N/S</td></tr></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sth-quiz-wrap">
+    <div class="quiz-section acrylic" id="quiz-wind">
+      <div class="sec-lbl" style="margin-bottom:.6rem">// Test Your Knowledge</div>
+      <div class="quiz-q" id="qWindQ">Loading question…</div>
+      <div class="quiz-opts" id="qWindOpts"></div>
+      <div class="quiz-feedback" id="qWindFb"></div>
+      <button class="detail-chip acrylic quiz-next" onclick="nextQuiz('wind')" style="margin-top:.5rem"><i class="fas fa-arrow-right"></i>Next Question</button>
+    </div>
+  </div>
+
+  <div class="sth-nav">
+    <a href="learn-clouds.html" class="sth-nav-btn acrylic">
+      <i class="fas fa-arrow-left" style="color:var(--muted)"></i>
+      <div><div class="sth-nav-lbl">Previous</div><div class="sth-nav-name">Cloud Taxonomy</div></div>
+    </a>
+    <a href="learn-storms.html" class="sth-nav-btn next acrylic">
+      <div><div class="sth-nav-lbl">Next</div><div class="sth-nav-name">Severe Storms</div></div>
+      <i class="fas fa-arrow-right" style="color:var(--muted)"></i>
+    </a>
+  </div>
+
+  <div class="sth-back-wrap">
+    <a href="learn.html" class="ab2-btn ab2-btn-secondary acrylic"><i class="fas fa-arrow-left"></i> Back to Archive</a>
+  </div>
+
+  <footer class="acrylic">
+    <p>© 2026 skyLens Intelligence · Data by OpenWeather, Open-Meteo &amp; ECMWF · Images by Unsplash</p>
+    <div class="f-links"><a href="/dashboard.html">Dashboard</a><a href="/learn.html">Learn</a><a href="/about.html">About</a></div>
+  </footer>
+
+</div>
+
+<script src="/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="/js/motion.js"></script>
+</body>
+</html>

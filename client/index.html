@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="skyLens — Pro Weather Intelligence. Real-time weather hub with live forecast and storm tracking.">
+<meta name="theme-color" content="#05091a">
+<link rel="manifest" href="/manifest.json">
+<title>skyLens · Pro Weather Intelligence</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234a8cc4'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='white'>☁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  /* Hub-specific: no sticky header on the new sidebar layout, so drop the
+     old --hh (header height) offset the hero content used to reserve. */
+  .hc-content{padding:2.5rem 4.5rem 0}
+  .hc-top{justify-content:space-between}
+  .hc-top-left{display:flex;align-items:center;gap:.75rem}
+  .hc-location.acrylic,.hc-uv-badge.acrylic{padding:.5rem 1rem;border-radius:100px}
+  .hc-search-inline{display:flex;align-items:center;gap:6px;padding:.4rem .5rem .4rem 1rem;border-radius:100px;width:240px}
+  .hc-search-inline input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-family:'Exo 2',sans-serif;font-size:.82rem}
+  .hc-search-inline input::placeholder{color:rgba(255,255,255,.55)}
+  .hc-search-inline button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);width:28px;height:28px;border-radius:50%;color:rgba(255,255,255,.7);cursor:pointer;flex-shrink:0;font-size:.72rem;transition:color .2s}
+  .hc-search-inline button:hover{color:#fff}
+
+  @media (max-width:900px){
+    .hc-content{padding:1.8rem 1.6rem 0}
+  }
+
+  /* ── Premium pass (matches About) ── */
+  :root{--teal:var(--ice)}  /* neutral accent: replaces the teal on this page */
+  .site-sidebar .logo-mark{background:linear-gradient(135deg,var(--blue),var(--ice));box-shadow:0 0 14px rgba(74,140,196,.25)}
+/* Phone: top row wraps instead of squeezing */
+@media (max-width:560px){
+  .hc-top{flex-wrap:wrap;gap:.6rem}
+  .hc-top-left{flex-wrap:wrap;gap:.5rem;max-width:100%}
+  .hc-location.acrylic{max-width:100%}
+  .hc-uv-badge{white-space:nowrap}
+  .hc-search-inline{width:100%}
+}
+/* Phone: readable hero text + compact 5-day forecast line */
+@media (max-width:768px){
+  .hc-content .hc-desc{color:rgba(255,255,255,.86);text-shadow:0 1px 14px rgba(0,0,0,.55)}
+  .hc-content .hc-cat{color:rgba(255,255,255,.92);text-shadow:0 1px 12px rgba(0,0,0,.5)}
+  .hc-content .hc-wind-row{color:rgba(255,255,255,.9)}
+  .hc-content .hc-right{color:rgba(255,255,255,.92)}
+  .hc-content .hc-forecast{display:block;margin-top:auto;padding-bottom:.4rem}
+  .hc-content .hcf-days{display:grid}
+  .hc-content .hcf-line-wrap{display:block;height:58px}
+  .hcf-day-name{font-size:.5rem;letter-spacing:0;color:rgba(255,255,255,.8)}
+  .hcf-day-temp{font-size:1.45rem}
+  .hcf-circle{width:32px;height:32px;font-size:.7rem}
+}
+
+  /* ── Hub background: photo instead of video (lighter, sharper) ── */
+  .hc-bg{background:#0e1116}
+  .hc-bg::before{content:'';position:absolute;inset:-4%;background:url(/assets/images/hub-bg.webp) center/cover no-repeat;animation:hcDrift 45s ease-in-out infinite alternate;will-change:transform}
+  .hc-overlay{display:block;position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,14,28,.5) 0%,rgba(6,14,28,.34) 40%,rgba(6,14,28,.62) 100%)}
+  @keyframes hcDrift{from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.06) translate3d(-1.5%,-1%,0)}}
+  @media (prefers-reduced-motion:reduce){.hc-bg::before{animation:none}}
+  /* ── Explore Weather button (replaces the scroll-down circle) ── */
+  .hc-explore{position:relative;z-index:2;margin:0 auto 2rem;flex-shrink:0;display:inline-flex;align-items:center;gap:10px;
+    padding:.85rem 1.8rem;border-radius:100px;font-family:'Exo 2',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:.02em;
+    text-decoration:none;color:#0e1116;background:var(--ice);box-shadow:0 8px 26px rgba(104,176,228,.32);transition:transform .2s,box-shadow .2s}
+  .hc-explore i{font-size:.8rem;transition:transform .2s}
+  .hc-explore:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(104,176,228,.45)}
+  .hc-explore:hover i{transform:translateX(3px)}
+  .hc-explore:focus-visible{outline:2px solid #fff;outline-offset:3px}
+  @media (max-width:768px){.hc-explore{margin-bottom:5.2rem}}
+  @media (prefers-reduced-motion:reduce){.hc-explore,.hc-explore i{transition:none}.hc-explore:hover{transform:none}}
+  :root{--page-glow:#5fa3dc}  /* sidebar glow colour, from this page's background */
+</style>
+<link rel="stylesheet" href="/css/premium.css">
+<link rel="preload" as="image" href="/assets/images/hub-bg.webp" type="image/webp">
+</head>
+<body data-needs-weather>
+
+<nav class="site-sidebar" aria-label="Main navigation">
+  <a href="index.html" class="logo-mark" aria-label="skyLens home"><i class="fas fa-meteor"></i></a>
+  <a href="index.html" class="site-nav-icon act" aria-current="page" aria-label="Hub"><i class="fas fa-house"></i><span class="snl">Hub</span></a>
+  <a href="dashboard.html" class="site-nav-icon" aria-label="Dashboard"><i class="fas fa-gauge-high"></i><span class="snl">Dashboard</span></a>
+  <a href="learn.html" class="site-nav-icon" aria-label="Learn"><i class="fas fa-book-open"></i><span class="snl">Learn</span></a>
+  <a href="about.html" class="site-nav-icon" aria-label="About"><i class="fas fa-circle-info"></i><span class="snl">About</span></a>
+  <div class="site-sidebar-spacer"></div>
+  <div class="site-sidebar-bottom">
+    <button class="site-nav-icon" id="authHeaderBtn" onclick="openAuthModal('login')" aria-label="Log in or sign up"><i class="fas fa-user"></i></button>
+  </div>
+</nav>
+
+<div class="page-shell">
+
+  <!-- ══ CINEMATIC FULL-SCREEN HERO — live data, IDs unchanged from the original build ══ -->
+  <div class="hero-cinematic">
+
+    <div class="hc-bg">
+      <div class="hc-overlay"></div>
+    </div>
+
+    <div class="hc-content">
+
+      <div class="hc-top">
+        <div class="hc-top-left">
+          <div class="hc-location acrylic">
+            <i class="fas fa-location-dot"></i>
+            <span id="hCity">DETECTING LOCATION…</span>
+          </div>
+          <div class="hc-uv-badge acrylic">UV Ind : <span id="heroUV">--</span></div>
+        </div>
+        <div class="hc-search-inline acrylic">
+          <input type="text" id="heroCityIn" placeholder="Search a city…" aria-label="Search city" autocomplete="off" onkeydown="if(event.key==='Enter')heroSearch()">
+          <button onclick="heroSearch()" aria-label="Search"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+
+      <div class="hc-main">
+        <div class="hc-left">
+          <h1 class="hc-condition" id="heroCondName">—</h1>
+          <div class="hc-cat" id="heroCondCat">Weather</div>
+          <p class="hc-desc" id="heroCondDesc">Detecting your location and fetching atmospheric data from live sensors…</p>
+        </div>
+        <div class="hc-right">
+          <div class="hc-temp">
+            <span class="hc-temp-num" id="hTemp">--</span>
+            <sup class="hc-temp-sup">°</sup>
+          </div>
+          <div class="hc-wind-row">
+            <i class="fas fa-wind"></i>
+            <span>Wind Status <strong id="heroWindKmh">--</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hc-forecast">
+        <div class="hcf-days" id="hcfDays">
+          <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+          <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+          <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+          <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+          <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+        </div>
+        <div class="hcf-line-wrap">
+          <svg class="hcf-svg" id="hcfSvg" viewBox="0 0 1000 80" preserveAspectRatio="none"></svg>
+          <div class="hcf-circles" id="hcfCircles"></div>
+        </div>
+      </div>
+    </div>
+
+    <a class="hc-explore" href="/dashboard.html">
+      <span>Explore Weather</span><i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+  <!-- END .hero-cinematic -->
+
+  <div aria-hidden="true" style="display:none">
+    <span id="hCond"></span>
+    <i id="hIcon" class="fas fa-sun"></i>
+    <span id="hHumid"></span>
+    <span id="hWind"></span>
+    <span id="hPress"></span>
+  </div>
+
+  <footer class="acrylic">
+    <p>© 2026 skyLens Intelligence · Data by OpenWeather, Open-Meteo &amp; ECMWF · Images by Unsplash</p>
+    <div class="f-links"><a href="/dashboard.html">Dashboard</a><a href="/learn.html">Learn</a><a href="/about.html">About</a></div>
+  </footer>
+
+</div>
+
+<script src="/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="/js/motion.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="skyLens — Meteorological Archive. 13 illustrated weather topics.">
+<meta name="theme-color" content="#05091a">
+<link rel="manifest" href="/manifest.json">
+<title>Learn · skyLens</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234a8cc4'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='white'>☁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .lrn-top{display:grid;grid-template-columns:1.3fr .9fr;gap:2.2rem;padding:2.5rem 3rem 3rem;align-items:stretch}
+  .lrn-title{font-family:'Exo 2',sans-serif;font-weight:800;font-size:var(--fs-display);line-height:1.08;color:var(--text-hi);margin-bottom:.9rem;letter-spacing:-.02em}
+  .lrn-sub{color:rgba(255,255,255,.64);font-size:var(--fs-body-l);line-height:1.65;max-width:52ch}
+
+  .lrn-feat{display:flex;flex-direction:column;overflow:hidden}
+  .lrn-feat-img{height:170px;flex-shrink:0}
+  .lrn-feat-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .lrn-feat-body{padding:1.5rem 1.7rem 1.7rem;display:flex;flex-direction:column;gap:.55rem;flex:1}
+  .lrn-feat-tag{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--teal);text-transform:uppercase;letter-spacing:.1em}
+  .lrn-feat-body h2{font-family:'Exo 2',sans-serif;font-weight:800;font-size:var(--fs-h2);line-height:1.2;color:var(--text-hi)}
+  .lrn-feat-body p{font-size:var(--fs-small);line-height:1.6;color:rgba(255,255,255,.6);flex:1}
+  .lrn-feat-cta{align-self:flex-start;margin-top:.2rem;font-family:'Exo 2',sans-serif;font-weight:700;font-size:.8rem;
+    color:#0e1116;background:rgba(240,244,255,.92);padding:.7rem 1.3rem;border-radius:14px;text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+
+  .lrn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;padding:0 3rem 4.5rem}
+  .lrn-card{cursor:pointer;min-height:230px;display:flex;flex-direction:column}
+  .lrn-card-img{height:130px;overflow:hidden}
+  .lrn-card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+  .lrn-card:hover .lrn-card-img img{transform:scale(1.06)}
+  .lrn-card-body{padding:1.3rem 1.4rem 1.4rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+  .lrn-ico{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    background:rgba(104,176,228,.1);color:var(--ice);border:1px solid rgba(104,176,228,.24);font-size:1rem}
+  .lrn-card h3{font-family:'Exo 2',sans-serif;font-size:var(--fs-h3);line-height:1.3;color:var(--text-hi)}
+  .lrn-card p{font-size:var(--fs-small);line-height:1.6;color:rgba(255,255,255,.58);flex:1}
+  .lrn-arrow{align-self:flex-end;color:var(--muted);font-size:.85rem;transition:all .2s}
+  .lrn-card:hover .lrn-arrow{color:var(--teal);transform:translateX(3px)}
+  @media (max-width:900px){
+    .lrn-top{grid-template-columns:1fr;padding-left:1.4rem;padding-right:1.4rem}
+    .lrn-grid{padding-left:1.4rem;padding-right:1.4rem}
+    .lrn-title{font-size:2.1rem}
+  }
+
+  /* ── Premium pass (matches About / Hub) ── */
+  :root{--teal:var(--ice)}  /* neutral accent: replaces the teal on this page */
+  .site-sidebar .logo-mark{background:linear-gradient(135deg,var(--blue),var(--ice));box-shadow:0 0 14px rgba(74,140,196,.25)}
+  .lrn-top .ab2-eyebrow{display:flex;align-items:center;gap:10px;font-size:var(--fs-label);letter-spacing:.16em;margin-bottom:1.3rem;color:rgba(255,255,255,.55)}
+  .lrn-top .ab2-eyebrow::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);flex-shrink:0}
+  .lrn-feat.acrylic{border-radius:24px}
+  .lrn-feat-tag{color:rgba(255,255,255,.55);letter-spacing:.14em}
+  .lrn-card.acrylic{--c:var(--ice);border-radius:22px;transition:border-color .25s,transform .25s}
+  .lrn-card.acrylic:nth-child(2),.lrn-card.acrylic:nth-child(7),.lrn-card.acrylic:nth-child(12){--c:var(--blue)}
+  .lrn-card.acrylic:nth-child(3),.lrn-card.acrylic:nth-child(5){--c:var(--gold)}
+  .lrn-card.acrylic .lrn-ico{color:var(--c);background:rgba(255,255,255,.06);background:color-mix(in srgb,var(--c) 12%,transparent);border-color:rgba(255,255,255,.12);border-color:color-mix(in srgb,var(--c) 28%,transparent)}
+  .lrn-card:hover .lrn-arrow{color:var(--c)}
+  .lrn-card.acrylic:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.18)}
+  @media (prefers-reduced-motion:reduce){.lrn-card.acrylic:hover{transform:none}.lrn-card:hover .lrn-card-img img{transform:none}}
+  :root{--page-glow:#a6d17e}  /* sidebar glow colour, from this page's background */
+</style>
+<link rel="stylesheet" href="/css/premium.css">
+</head>
+<body>
+
+<div class="dbp-bg" style="background-image:url('/assets/images/learn-bg-rain.webp')"></div>
+
+<nav class="site-sidebar" aria-label="Main navigation">
+  <a href="index.html" class="logo-mark" aria-label="skyLens home"><i class="fas fa-meteor"></i></a>
+  <a href="index.html" class="site-nav-icon" aria-label="Hub"><i class="fas fa-house"></i><span class="snl">Hub</span></a>
+  <a href="dashboard.html" class="site-nav-icon" aria-label="Dashboard"><i class="fas fa-gauge-high"></i><span class="snl">Dashboard</span></a>
+  <a href="learn.html" class="site-nav-icon act" aria-current="page" aria-label="Learn"><i class="fas fa-book-open"></i><span class="snl">Learn</span></a>
+  <a href="about.html" class="site-nav-icon" aria-label="About"><i class="fas fa-circle-info"></i><span class="snl">About</span></a>
+  <div class="site-sidebar-spacer"></div>
+  <div class="site-sidebar-bottom">
+    <button class="site-nav-icon" id="authHeaderBtn" onclick="openAuthModal('login')" aria-label="Log in or sign up"><i class="fas fa-user"></i></button>
+  </div>
+</nav>
+
+<div class="page-shell">
+
+  <div class="lrn-top">
+    <div>
+      <div class="ab2-eyebrow">// Meteorological Archive</div>
+      <h1 class="lrn-title">13 illustrated topics,<br>one atmosphere.</h1>
+      <p class="lrn-sub">Physics and phenomena shaping our atmosphere — from everyday breezes to the storms that make headlines.</p>
+    </div>
+
+    <div class="lrn-feat acrylic droplet">
+      <div class="lrn-feat-img"><img src="/assets/images/cyclones-feat.webp" alt="Hurricane from satellite"></div>
+      <div class="lrn-feat-body">
+        <div class="lrn-feat-tag">// Featured</div>
+        <h2>Tropical Cyclones</h2>
+        <p>The most powerful storms on Earth begin as ordinary thunderstorms over warm ocean water — trace the thermodynamics of low-pressure rotation, from tropical depression to Category 5.</p>
+        <a href="learn-cyclones.html" class="lrn-feat-cta">Read the full topic <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="lrn-grid">
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-clouds.html'">
+      <div class="lrn-card-img"><img src="/assets/images/clouds-thumb.webp" alt="Dramatic cumulus clouds" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico"><i class="fas fa-cloud"></i></div>
+        <h3>Cloud Taxonomy</h3><p>From high-altitude Cirrus to the storm-bearing Cumulonimbus.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-wind.html'">
+      <div class="lrn-card-img"><img src="/assets/images/wind-thumb.webp" alt="Mountain peaks above clouds" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico"><i class="fas fa-wind"></i></div>
+        <h3>Global Circulation</h3><p>Jet streams, trade winds, and the Coriolis effect explained.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic droplet" onclick="location.href='learn-storms.html'">
+      <div class="lrn-card-img"><img src="/assets/images/storms-thumb.webp" alt="Lightning strike over city" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico"><i class="fas fa-bolt"></i></div>
+        <h3>Severe Storms</h3><p>Physics of lightning, supercells, and tornadic genesis.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-optics.html'">
+      <div class="lrn-card-img"><img src="/assets/images/optics-thumb.webp" alt="Double rainbow over landscape" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico" style="color:var(--ice);background:rgba(104,176,228,.1);border-color:rgba(104,176,228,.22)"><i class="fas fa-rainbow"></i></div>
+        <h3>Atmospheric Optics</h3><p>Light diffraction, rainbows, halos, and sun dogs explained.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-climate.html'">
+      <div class="lrn-card-img"><img src="/assets/images/climate-thumb.webp" alt="Ocean waves at sunset" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico"><i class="fas fa-temperature-arrow-up"></i></div>
+        <h3>Climate Anomalies</h3><p>El Niño, La Niña, and long-term oscillation indices decoded.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-tornado.html'">
+      <div class="lrn-card-img"><img src="/assets/images/tornado-thumb.webp" alt="Tornado funnel cloud" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico" style="background:rgba(224,90,112,.1);color:var(--storm);border-color:rgba(224,90,112,.22)"><i class="fas fa-tornado"></i></div>
+        <h3>Tornadoes</h3><p>Vortex mechanics, Fujita scale, and tornado alley explained.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic droplet" onclick="location.href='learn-monsoon.html'">
+      <div class="lrn-card-img"><img src="/assets/images/monsoon-thumb.webp" alt="Heavy monsoon rain" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico"><i class="fas fa-cloud-showers-heavy"></i></div>
+        <h3>Monsoon Systems</h3><p>Seasonal wind reversals that bring life-giving — and destructive — rains.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic droplet" onclick="location.href='learn-fog.html'">
+      <div class="lrn-card-img"><img src="/assets/images/fog-thumb.webp" alt="Misty foggy forest" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico" style="background:rgba(58,98,130,.1);color:var(--muted);border-color:rgba(58,98,130,.3)"><i class="fas fa-smog"></i></div>
+        <h3>Fog &amp; Visibility</h3><p>Radiation, advection, and sea fog — when clouds touch the ground.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-hail.html'">
+      <div class="lrn-card-img"><img src="/assets/images/hail-thumb.webp" alt="Hailstones scattered on ground" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico"><i class="fas fa-cloud-meatball"></i></div>
+        <h3>Hail &amp; Precipitation Types</h3><p>How raindrops freeze into hailstones, and what separates sleet from freezing rain.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-heat.html'">
+      <div class="lrn-card-img"><img src="/assets/images/heat-thumb.webp" alt="Hot sunny city street" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico" style="background:rgba(224,90,112,.1);color:var(--storm);border-color:rgba(224,90,112,.22)"><i class="fas fa-city"></i></div>
+        <h3>Heat Waves &amp; Urban Heat</h3><p>Why concrete cities run hotter than the countryside around them.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-aurora.html'">
+      <div class="lrn-card-img"><img src="/assets/images/aurora-thumb.webp" alt="Aurora borealis over the sea" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico" style="color:var(--ice);background:rgba(104,176,228,.1);border-color:rgba(104,176,228,.22)"><i class="fas fa-satellite"></i></div>
+        <h3>Space Weather &amp; Aurora</h3><p>Solar wind, geomagnetic storms, and the physics behind the northern lights.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+    <div class="lrn-card acrylic" onclick="location.href='learn-localwind.html'">
+      <div class="lrn-card-img"><img src="/assets/images/localwind-thumb.webp" alt="Tall grass blowing in the wind" loading="lazy"></div>
+      <div class="lrn-card-body"><div class="lrn-ico"><i class="fas fa-compass"></i></div>
+        <h3>Local Wind Systems</h3><p>Sea breezes and mountain winds — the small-scale airflows a weather map won't show.</p>
+        <div class="lrn-arrow"><i class="fas fa-arrow-right"></i></div></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2026 skyLens Intelligence · Data by OpenWeather, Open-Meteo &amp; ECMWF · Images by Unsplash</p>
+    <div class="f-links"><a href="/dashboard.html">Dashboard</a><a href="/learn.html">Learn</a><a href="/about.html">About</a></div>
+  </footer>
+
+</div>
+
+<script src="/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="/js/motion.js"></script>
+</body>
+</html>

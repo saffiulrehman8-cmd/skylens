@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="skyLens — Live Dashboard. Real-time weather, storm maps, and atmospheric data.">
+<meta name="theme-color" content="#05091a">
+<link rel="manifest" href="/manifest.json">
+<title>Dashboard · skyLens</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234a8cc4'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='white'>☁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .db-main{display:grid;grid-template-columns:300px 1fr;gap:1.2rem;padding:2rem 3rem 2rem;
+    align-items:stretch;flex:1}
+  .db-mini-col{display:flex;flex-direction:column;gap:1rem}
+  .db-mini-grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .db-mini-card{padding:1.2rem;display:flex;flex-direction:column;gap:.5rem}
+  .db-mini-card i{color:var(--teal);font-size:1rem}
+  .dmc-val{font-family:'Exo 2',sans-serif;font-weight:800;font-size:1.4rem;color:var(--text-hi)}
+  .dmc-lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .dmc-sub{font-size:.68rem;color:var(--muted)}
+
+  .db-f10-card{padding:1.2rem}
+  .db-f10-card h4{margin-bottom:.7rem}
+  #f10Grid{display:flex;flex-direction:column;gap:.35rem;max-height:320px;overflow-y:auto}
+  .f10-day{display:flex;align-items:center;gap:10px;padding:.38rem .1rem;border-bottom:1px solid var(--border)}
+  .f10-day:last-child{border-bottom:none}
+  .f10-name{font-family:'Exo 2',sans-serif;font-size:.76rem;color:var(--text-hi);width:40px;flex-shrink:0}
+  .f10-ico{color:var(--gold);font-size:.85rem;width:18px;text-align:center}
+  .f10-hi{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--text-hi);width:28px;text-align:right}
+  .f10-lo{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--muted);width:28px;text-align:right}
+  .f10-rain{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--ice);margin-left:auto;min-width:2.7rem;text-align:center;padding:.14rem .45rem;border-radius:100px;background:rgba(104,176,228,.14);border:1px solid rgba(104,176,228,.22)}
+  .f10-rain:empty{background:none;border-color:transparent}
+
+  .db-big-col{min-width:0;display:flex;flex-direction:column}
+  .db-view{display:none}
+  .db-view.act{display:flex;flex-direction:column;flex:1}
+
+  /* Weather view — reuses Hub's exact hero classes/IDs, so renderHero()
+     and renderHeroForecast() populate it with no extra JS needed. */
+  #view-weather{padding:2.4rem 2.6rem}
+  #view-weather .hc-forecast{margin-top:auto}
+  #view-weather .hc-top{justify-content:space-between}
+
+  /* These sit on top of an already-blurred acrylic panel, so they use a
+     lighter blur + more opaque fill instead of full nested acrylic —
+     stacking two 22px blurs compounds into an indistinct haze. */
+  #view-weather .hc-location{background:rgba(255,255,255,.1);backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.18);padding:.5rem 1rem;border-radius:100px}
+  .hc-search-inline{position:relative;display:flex;align-items:center;gap:6px;padding:.4rem .5rem .4rem 1rem;
+    border-radius:100px;width:240px;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.18)}
+  .hc-search-inline input{flex:1;background:transparent;border:none;outline:none;color:#fff;
+    font-family:'Exo 2',sans-serif;font-size:.82rem}
+  .hc-search-inline input::placeholder{color:rgba(255,255,255,.55)}
+  .hc-search-inline button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+    width:28px;height:28px;border-radius:50%;color:rgba(255,255,255,.7);cursor:pointer;flex-shrink:0;
+    font-size:.72rem;transition:color .2s}
+  .hc-search-inline button:hover{color:#fff}
+
+  .db-detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.4rem}
+  .db-detail{padding:1.1rem;background:rgba(10,14,20,.4);backdrop-filter:blur(6px);
+    border:1px solid var(--border-hi);border-radius:var(--r)}
+  .db-detail i{color:var(--teal);font-size:1.1rem;margin-bottom:.6rem;display:block}
+
+  .db-map-wrap{flex:1;min-height:420px;overflow:hidden;padding:4px}
+  .db-map-wrap iframe{width:100%;height:100%;border:0;border-radius:calc(var(--r-lg) - 4px)}
+
+  #heatBar{background:var(--gold)}
+  #pressBar{background:var(--teal)}
+
+  /* Sticky footer — page-shell becomes a full-height flex column so the
+     footer sits at the bottom even when content is short. */
+  .page-shell{display:flex;flex-direction:column}
+
+  @media (max-width:1000px){
+    .db-main{grid-template-columns:1fr;padding:1.6rem 1.4rem 2rem}
+    .db-detail-grid{grid-template-columns:1fr 1fr}
+  }
+
+  /* ═══ FIT-TO-SCREEN LAYOUT ═══════════════════════════════════════════
+     Desktop: the page is exactly one viewport tall; every panel sizes to
+     the space it is given instead of pushing the page into a scroll.
+     Narrow or very short screens fall back to normal scrolling below. */
+  @media (min-width:1001px) and (min-height:621px){
+    html,body{height:100%;overflow:hidden}
+    .page-shell{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+    .db-main{flex:1;min-height:0;padding:1rem 1.4rem .8rem 1.2rem;gap:1rem;grid-template-rows:minmax(0,1fr)}
+    .db-mini-col,.db-big-col{min-height:0;height:100%}
+    footer.acrylic{flex-shrink:0;padding:.55rem 1.6rem}
+    footer.acrylic p{font-size:.6rem}
+  }
+
+  /* Left column: 2x2 stat cards stay compact, 10-day list takes the rest */
+  .db-mini-col{gap:.8rem}
+  .db-mini-grid2{gap:.8rem;flex-shrink:0}
+  .db-mini-card{padding:.85rem 1rem;gap:.15rem}
+  .db-mini-card i{font-size:.85rem}
+  .dmc-val{font-size:1.3rem;line-height:1.1}
+  .db-f10-card{flex:1;min-height:0;display:flex;flex-direction:column;padding:1rem 1.1rem}
+  .db-f10-card h4{margin-bottom:.4rem;flex-shrink:0}
+  #f10Grid{flex:1;min-height:0;max-height:none;gap:4px;overflow-y:auto;scrollbar-width:thin}
+  .f10-day{flex:1 1 0;min-height:24px;padding:0 .7rem 0 .8rem;gap:8px}
+
+  /* Right column: every view fills the panel height */
+  .db-view.act{min-height:0}
+  .db-view>.data-card{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:auto;scrollbar-width:thin}
+  .db-center{text-align:center;padding:1.5rem}
+
+  /* Weather view: type and spacing scale with viewport height */
+  #view-weather{padding:clamp(1rem,3vh,2rem) clamp(1.2rem,2.4vw,2.4rem);min-height:0}
+  #view-weather .hc-top{margin-bottom:clamp(.5rem,2vh,1.4rem);flex-shrink:0}
+  #view-weather .hc-main{min-height:0}
+  #view-weather .hc-condition{font-size:clamp(2.2rem,min(4.6vw,9vh),4.6rem);overflow-wrap:anywhere}
+  #view-weather .hc-temp-num{font-size:clamp(4.5rem,min(10vw,19vh),8.5rem)}
+  #view-weather .hc-temp-sup{font-size:clamp(1.6rem,min(3vw,5vh),2.8rem);margin-top:.3rem}
+  #view-weather .hc-desc{font-size:clamp(.74rem,1.6vh,.86rem);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  #view-weather .hc-forecast{flex-shrink:0}
+  #view-weather .hcf-day-temp{font-size:clamp(1.4rem,3.4vh,1.95rem)}
+  #view-weather .hcf-line-wrap{height:clamp(72px,11.5vh,104px);margin-top:clamp(.7rem,2.2vh,1.2rem)}
+  #view-weather .hcf-circle{width:clamp(32px,4.6vh,40px);height:clamp(32px,4.6vh,40px)}
+
+  /* Visibility / Pressure / Cloud cover: icon beside value, one slim row */
+  .db-detail-grid{gap:.8rem;margin-top:clamp(.8rem,3vh,1.6rem);flex-shrink:0}
+  .db-detail{padding:.7rem .9rem;display:grid;grid-template-columns:auto 1fr;column-gap:.8rem;align-items:center}
+  .db-detail i{grid-row:1 / span 2;margin:0;font-size:1.05rem}
+  .db-detail .dmc-val{font-size:1.15rem}
+
+  /* Map */
+  .db-map-wrap{min-height:0}
+
+  /* Chart */
+  .db-chart-box{flex:1;min-height:0;position:relative}
+  #view-chart .data-card{justify-content:flex-start}
+
+  /* Hourly: 12 slots laid out as a grid that fills the card (was a vertical stack) */
+  #hourlyTable{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.7rem;overflow:visible}
+  #hourlyTable .hr-item{min-width:0;padding:clamp(.5rem,2vh,1.1rem) .4rem}
+  #hourlyTable .hr-time{font-size:.68rem}
+  #hourlyTable .hr-ico{font-size:1.2rem}
+  #hourlyTable .hr-temp{font-size:1.5rem}
+  #hourlyTable .hr-pop{font-size:.66rem;min-height:.9rem}
+
+  /* Heat / Pressure / AQI / Astro / Solar */
+  #view-heat .data-card{justify-content:center;gap:clamp(1rem,4vw,3rem)}
+  .aqi-table td{padding:clamp(.3rem,1.2vh,.55rem) .4rem}
+  #view-astro{gap:.9rem}
+  #view-astro .db-detail-grid{flex:1;min-height:0;margin-top:0;grid-template-rows:repeat(2,minmax(0,1fr))}
+  #view-astro .data-card{flex:0 0 auto;margin-top:0!important}
+  #view-solar .db-detail-grid{margin-top:0}
+
+
+  /* ═══ FILL-THE-PANEL PASS (heat / aqi / moon / pressure / astro / solar / hourly) ═══ */
+  .db-scale{display:flex;justify-content:space-between;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+
+  /* Hourly: header on top, two rows of tiles stretch to fill the card */
+  #view-hourly .data-card{justify-content:flex-start}
+  #hourlyTable{flex:1;min-height:0;grid-template-rows:repeat(2,minmax(0,1fr))}
+  #hourlyTable .hr-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem}
+  #hourlyTable .hr-ico{font-size:clamp(1.4rem,4vh,2.2rem);margin:0}
+  #hourlyTable .hr-temp{font-size:clamp(1.8rem,5vh,2.8rem)}
+  #hourlyTable .hr-time{font-size:.78rem}
+
+  /* Heat */
+  #view-heat .data-card{flex-direction:row;flex-wrap:nowrap;justify-content:center;align-items:center;gap:clamp(2rem,6vw,5rem)}
+  #view-heat .data-card>div:first-child>.dmc-lbl{display:none}
+  #view-heat .data-card>div:first-child{flex:0 0 auto}
+  #view-heat .heat-circle{width:clamp(150px,30vh,270px);height:clamp(150px,30vh,270px);border-width:5px;margin-bottom:1rem}
+  #view-heat .heat-circle-val{font-size:clamp(3.4rem,10vh,6rem)}
+  #view-heat .heat-circle-unit{font-size:.7rem}
+  #view-heat .data-card>div:last-child{flex:1;max-width:560px;min-width:240px}
+  #heatCategory{font-size:clamp(2.2rem,7vh,3.6rem)!important;margin-bottom:.3rem}
+  #view-heat .dmc-sub{font-size:.95rem}
+  #view-heat .mini-bar-track,#view-press .mini-bar-track{height:14px}
+
+  /* AQI: rows share the height, bigger type, wide bars */
+  #view-aqi .data-card{justify-content:flex-start}
+  #view-aqi .aqi-table{flex:1;height:100%;margin-top:.6rem}
+  #view-aqi .aqi-table td{font-size:1rem;padding:0 .6rem}
+  #view-aqi .aqi-table .at-name{width:90px;font-size:1.15rem}
+  #view-aqi .aqi-table .at-val{width:110px;font-size:2.2rem}
+  #view-aqi .aqi-table .at-unit{width:80px;font-size:.72rem}
+  #view-aqi .aqi-table .at-bar-cell{width:auto}
+  #view-aqi .aqi-mini-bar{width:100%;height:10px}
+  #view-aqi .aqi-table .at-status{width:110px;font-size:.8rem}
+
+  /* Moon */
+  #moonEmoji{font-size:clamp(6rem,24vh,12rem)!important}
+  #moonName{font-size:clamp(2rem,6vh,3.2rem)!important}
+  #moonIllum{font-size:1.05rem}
+
+  /* Pressure */
+  #presshPa{font-size:clamp(4rem,15vh,8rem)!important}
+  #view-press .dmc-lbl{font-size:.85rem}
+  #view-press .dmc-sub{font-size:1.05rem}
+
+  /* Astro: 2x2 tiles with centred content */
+  #view-astro .db-detail{align-content:center;row-gap:.35rem;column-gap:1.2rem;padding:1rem 1.6rem}
+  #view-astro .db-detail i{font-size:clamp(1.6rem,4vh,2.4rem)}
+  #view-astro .db-detail .dmc-val{font-size:clamp(1.8rem,5vh,2.8rem)}
+  #view-astro .db-detail .dmc-lbl{font-size:.75rem}
+  #view-astro .data-card{padding:1rem 1.6rem;justify-content:flex-start}
+  #astroMoonPhase{font-size:clamp(2.4rem,6vh,3.6rem)!important}
+
+  /* Solar */
+  #view-solar .data-card{gap:clamp(.8rem,3vh,2rem)}
+  #view-solar svg{width:clamp(280px,min(46vw,56vh),560px)!important;margin:0 auto!important}
+  #view-solar .dmc-val{font-size:clamp(2rem,6vh,3.2rem)}
+  #view-solar .dmc-lbl{font-size:.8rem}
+  #view-solar .dmc-sub{font-size:1.05rem;margin-top:0!important}
+
+  @media (max-width:1000px), (max-height:620px){
+    html,body{height:auto;overflow:auto}
+    .page-shell{height:auto;min-height:100vh;overflow:visible}
+    .db-main{grid-template-rows:none}
+    .db-mini-col,.db-big-col{height:auto}
+    .db-f10-card{flex:none}
+    #f10Grid{max-height:340px}
+    .f10-day{flex:none;min-height:30px}
+    .db-view>.data-card{flex:none}
+    .db-view.act{min-height:480px}
+    .db-chart-box{min-height:260px}
+    #hourlyTable{grid-template-columns:repeat(4,minmax(0,1fr))}
+    #view-heat .data-card{flex-wrap:wrap}
+  }
+  @media (max-width:560px){
+    #hourlyTable{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .db-detail-grid{grid-template-columns:1fr}
+  }
+
+  /* ── Colour pass (matches About / Hub / Learn) — colour only, no sizing ── */
+  :root{--teal:var(--ice)}  /* replaces the teal on this page */
+  .site-sidebar .logo-mark{background:linear-gradient(135deg,var(--blue),var(--ice));box-shadow:0 0 14px rgba(74,140,196,.25)}
+  .db-main .acrylic{border-radius:22px}
+  .db-mini-card:nth-child(1) i{color:var(--ice)}
+  .db-mini-card:nth-child(2) i{color:var(--gold)}
+  .db-mini-card:nth-child(3) i{color:#8fa3bd}
+  .db-mini-card:nth-child(4) i{color:var(--blue)}
+  #view-weather .db-detail:nth-child(1) i{color:var(--ice)}
+  #view-weather .db-detail:nth-child(2) i{color:var(--blue)}
+  #view-weather .db-detail:nth-child(3) i{color:#8fa3bd}
+  #view-astro .db-detail:nth-child(1) i,#view-astro .db-detail:nth-child(4) i{color:var(--gold)}
+  #view-astro .db-detail:nth-child(2) i{color:var(--ice)}
+  #view-astro .db-detail:nth-child(3) i{color:var(--blue)}
+  #pressBar{background:linear-gradient(90deg,var(--blue),var(--ice))}
+
+  /* Extras under Heat / Moon / Pressure / Solar. Purely additive: they sit
+     below each view's existing card, which keeps its own sizing. Own class
+     names (dbx-*) so the #view-heat .data-card rules never match them. */
+  .db-extra{flex-shrink:0;display:flex;flex-direction:column;gap:.8rem;margin-top:.8rem}
+  .dbx-card.acrylic{padding:1rem 1.2rem}
+  .dbx-head{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.7rem}
+  .dbx-head h4{margin:0;font-family:'Exo 2',sans-serif;font-size:.86rem;font-weight:700;color:var(--text-hi)}
+  .dbx-sub{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+  .dbx-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:.6rem}
+  .dbx-row-wide{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem}
+  .dbx-tile{display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.65rem .3rem;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.04);text-align:center;min-width:0}
+  .dbx-tile b{font-family:'Exo 2',sans-serif;font-size:1.1rem;color:var(--text-hi);font-weight:700}
+  .dbx-tile .dbx-nm{font-family:'Exo 2',sans-serif;font-size:.78rem;color:var(--text-hi);font-weight:600}
+  .dbx-t{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted)}
+  .dbx-em{font-size:1.6rem;line-height:1}
+  .dbx-badge{font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:.14rem .6rem;border-radius:100px;background:rgba(104,176,228,.14);border:1px solid rgba(104,176,228,.22);color:var(--ice)}
+  .dbx-chart{width:100%;height:clamp(64px,11vh,110px);display:block;overflow:visible}
+  .dbx-note{font-size:.8rem;color:var(--muted);margin-top:.6rem}
+
+  /* Top row: clock pill beside the location pill; search, then the alerts bell
+     on its right. hc-top gets a z-index so the dropdowns sit above the hero. */
+  #view-weather .hc-top{z-index:5}
+  #view-weather .hc-search-inline{margin-left:auto}
+  .db-clock{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.18);padding:.5rem 1rem;border-radius:100px;color:rgba(255,255,255,.88);
+    font-family:'Exo 2',sans-serif;font-size:.88rem;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .db-clock i{color:var(--ice);font-size:.85rem}
+  .db-seg{display:flex;padding:2px;margin-left:.7rem;border-radius:100px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px)}
+  .db-tool-btn{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.85);border-radius:100px;font-size:.82rem;cursor:pointer;transition:color .2s,border-color .2s}
+  .db-tool-btn:hover{color:#fff;border-color:rgba(255,255,255,.32)}
+  .db-tool-btn.db-icon{width:40px;height:40px;padding:0;flex-shrink:0}
+  .db-bell-wrap{position:relative;flex-shrink:0}
+  /* Alerts dropdown = the site's standard acrylic card; each alert is styled
+     like the other small cards (.db-detail). */
+  .db-bell-wrap .alert-zone.acrylic{position:absolute;top:calc(100% + 10px);left:0;width:min(380px,80vw);max-height:60vh;overflow-y:auto;overflow-x:hidden;padding:.8rem;gap:.6rem;z-index:40;background:linear-gradient(150deg,#4a4f52,#363b40)}
+  .db-bell-wrap .alert-zone:empty::before{content:'No active alerts for this location';position:static;opacity:1;font-size:.8rem;color:var(--muted);padding:.3rem .4rem;background:none}
+  .db-bell-wrap .alert-banner,.db-bell-wrap .alert-banner.warn,.db-bell-wrap .alert-banner.danger,.db-bell-wrap .alert-banner.info{background:rgba(255,255,255,.07);backdrop-filter:blur(6px);border:1px solid var(--border-hi);border-radius:var(--r);padding:.8rem 1rem;animation:none}
+
+  /* Recent + favorite cities: popover under the search box, only while it is
+     focused and empty. Chips are re-styled because ".hc-search-inline button"
+     would otherwise turn them into round search buttons. */
+  .db-recent.acrylic{display:none;position:absolute;top:calc(100% + 8px);right:0;width:300px;max-width:80vw;flex-direction:column;gap:.6rem;padding:.8rem;z-index:35;background:linear-gradient(150deg,#4a4f52,#363b40)}
+  .hc-search-inline:focus-within .db-recent.acrylic{display:flex}
+  #cityIn:not(:placeholder-shown)~.db-recent.acrylic{display:none}
+  .db-recent.acrylic:not(:has(.rc-chip)){display:none!important}
+  .db-recent #recentWrap,.db-recent #favWrap{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}
+  .db-recent #recentWrap:empty,.db-recent #favWrap:empty{display:none}
+  .hc-search-inline .db-recent .rc-chip{width:auto;height:auto;border-radius:100px;padding:.28rem .7rem;font-size:.76rem;color:var(--text-hi);background:rgba(255,255,255,.08);border:1px solid var(--border-hi)}
+  .hc-search-inline .db-recent .rc-chip:hover{color:var(--text-hi);border-color:var(--border-hi)}
+
+  /* Map overlay pills float over the map; no layout impact */
+  #view-map{position:relative}
+  .db-map-wrap{position:relative}
+  .db-map-pills{position:absolute;top:14px;left:14px;z-index:5}
+
+  @media(min-width:1001px) and (max-width:1100px){.db-clock{display:none}}
+  @media(max-width:1000px){#view-weather .hc-top{flex-wrap:wrap;gap:.6rem}}
+  /* Phone / tablet: map layer pills sit in their own row above the map card (never over Windy's logo) */
+  @media(max-width:1000px){
+    #view-map .db-map-pills{position:static;flex:0 0 auto;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:0 2px 8px;scrollbar-width:none}
+    #view-map .db-map-pills::-webkit-scrollbar{display:none}
+    #view-map .db-map-pills .mp-btn{flex:0 0 auto;white-space:nowrap;padding:.45rem .9rem;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+    #view-map .db-map-pills .mp-btn:not(.act){background:rgba(20,22,28,.55)}
+  }
+
+  /* Small cards in Weather / Heat / Solar / Astro use the same glass as the other cards */
+  #view-weather .db-detail,#view-heat .db-detail,#view-solar .db-detail,#view-astro .db-detail{background:rgba(255,255,255,.055);
+    backdrop-filter:blur(22px) saturate(1.45);-webkit-backdrop-filter:blur(22px) saturate(1.45);
+    border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+/* Phone fixes (clipped Astro / Solar / Pressure / AQI) */
+@media (max-width:560px){
+  .db-view,.db-view>*{min-width:0;max-width:100%}
+  #view-astro .db-detail-grid{grid-template-columns:1fr!important}
+  #view-astro .db-detail{padding:.8rem 1.1rem}
+  #presshPa{font-size:clamp(3rem,22vw,5rem)!important}
+  #view-solar svg{width:100%!important;max-width:260px}
+  #view-solar .db-detail-grid{gap:.4rem}
+  #view-solar .dmc-val,#xSolarInfo .dmc-val{font-size:clamp(1.3rem,6.2vw,1.8rem)!important;white-space:nowrap}
+  #view-aqi .aqi-table .at-bar-cell,#view-aqi .aqi-table .at-status{display:none}
+  #view-aqi .aqi-table .at-name{width:auto;font-size:1rem}
+  #view-aqi .aqi-table .at-val{width:auto;font-size:1.8rem}
+  #view-aqi .aqi-table .at-unit{width:auto}
+  #view-aqi .aqi-table td{padding:0 .4rem}
+}
+/* Small screens: quick cards + 10-day list only on the Weather view */
+@media (max-width:1000px){
+  body:has(#view-weather:not(.act)) .db-mini-col{display:none}
+}
+  :root{--page-glow:#c2ad85}  /* sidebar glow colour, from this page's background */
+</style>
+<link rel="preload" as="image" href="/assets/images/dashboard-bg.webp" type="image/webp">
+</head>
+<body data-needs-weather>
+
+<div class="dbp-bg" style="background-image:url('/assets/images/dashboard-bg.webp')"></div>
+
+<!-- ══ Feature rail ══ -->
+<nav class="feat-rail" aria-label="Dashboard panels">
+  <a href="index.html" class="logo-mark" aria-label="skyLens home"><i class="fas fa-meteor"></i></a>
+  <button class="site-nav-icon" onclick="toggleSiteDrawer()" aria-label="Open site navigation"><i class="fas fa-bars"></i><span class="snl">Menu</span></button>
+  <div class="feat-divider"></div>
+  <button class="site-nav-icon feat-icon act" onclick="selectDbView('weather',this)" aria-label="Weather"><i class="fas fa-cloud-sun"></i><span class="snl">Weather</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('map',this)" aria-label="Storm map"><i class="fas fa-map"></i><span class="snl">Map</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('chart',this)" aria-label="Charts"><i class="fas fa-chart-line"></i><span class="snl">Chart</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('hourly',this)" aria-label="Hourly forecast"><i class="fas fa-clock"></i><span class="snl">Hourly</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('heat',this)" aria-label="Heat index"><i class="fas fa-temperature-half"></i><span class="snl">Heat</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('aqi',this)" aria-label="Air quality"><i class="fas fa-lungs"></i><span class="snl">AQI</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('moon',this)" aria-label="Moon phase"><i class="fas fa-moon"></i><span class="snl">Moon</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('astro',this)" aria-label="Astronomy"><i class="fas fa-star"></i><span class="snl">Astro</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('press',this)" aria-label="Pressure"><i class="fas fa-gauge"></i><span class="snl">Pressure</span></button>
+  <button class="site-nav-icon feat-icon" onclick="selectDbView('solar',this)" aria-label="Solar arc"><i class="fas fa-sun"></i><span class="snl">Solar</span></button>
+  <div class="site-sidebar-spacer"></div>
+  <div class="site-sidebar-bottom">
+    <button class="site-nav-icon" id="authHeaderBtn" onclick="openAuthModal('login')" aria-label="Log in or sign up"><i class="fas fa-user"></i></button>
+  </div>
+</nav>
+
+<!-- ══ Full site nav drawer ══ -->
+<div class="drawer-scrim" id="drawerScrim" onclick="toggleSiteDrawer()"></div>
+<nav class="site-sidebar drawer" id="siteDrawer" aria-label="Main navigation">
+  <a href="index.html" class="logo-mark" aria-label="skyLens home"><i class="fas fa-meteor"></i></a>
+  <a href="index.html" class="site-nav-icon" aria-label="Hub"><i class="fas fa-house"></i><span class="snl">Hub</span></a>
+  <a href="dashboard.html" class="site-nav-icon act" aria-current="page" aria-label="Dashboard"><i class="fas fa-gauge-high"></i><span class="snl">Dashboard</span></a>
+  <a href="learn.html" class="site-nav-icon" aria-label="Learn"><i class="fas fa-book-open"></i><span class="snl">Learn</span></a>
+  <a href="about.html" class="site-nav-icon" aria-label="About"><i class="fas fa-circle-info"></i><span class="snl">About</span></a>
+</nav>
+
+<div class="page-shell">
+
+  <div class="db-main">
+
+    <!-- ══ Middle column: persistent mini-panels ══ -->
+    <div class="db-mini-col">
+      <div class="db-mini-grid2">
+        <div class="db-mini-card acrylic"><i class="fas fa-cloud-rain"></i><span class="dmc-val" id="dbRainChip">--</span><span class="dmc-lbl">Rain Chance</span></div>
+        <div class="db-mini-card acrylic"><i class="fas fa-sun"></i><span class="dmc-val" id="uvVal">--</span><span class="dmc-lbl">UV Index</span><span class="dmc-sub" id="uvLbl"></span></div>
+        <div class="db-mini-card acrylic"><i class="fas fa-wind"></i><span class="dmc-val"><span id="windKmh">--</span></span><span class="dmc-lbl">Wind (<span id="windSpdUnit">km/h</span>)</span><span class="dmc-sub" id="windDirLg"></span></div>
+        <div class="db-mini-card acrylic"><i class="fas fa-droplet"></i><span class="dmc-val" id="cwH">--</span><span class="dmc-lbl">Humidity</span></div>
+      </div>
+      <div class="db-f10-card acrylic">
+        <h4>10-Day Forecast</h4>
+        <div id="f10Grid"></div>
+      </div>
+    </div>
+
+    <!-- ══ Big swappable panel ══ -->
+    <div class="db-big-col">
+
+      <section class="db-view act acrylic" id="view-weather">
+        <div class="hc-top">
+          <div class="hc-location"><i class="fas fa-location-dot"></i><span id="hCity">DETECTING LOCATION…</span></div>
+          <div class="db-clock"><i class="fas fa-clock"></i><span id="clockEl"></span></div>
+          <div class="db-bell-wrap">
+            <button class="db-tool-btn db-icon notif-btn" id="notifBtn" onclick="dbToggleAlerts(event)" title="Weather alerts" aria-label="Weather alerts"><i class="fas fa-bell"></i><span class="notif-badge" id="notifBadge">0</span></button>
+            <div class="alert-zone acrylic" id="alertZone" role="region" aria-label="Weather alerts"></div>
+          </div>
+          <button class="db-tool-btn db-icon" id="saveFavBtn" style="display:none" onclick="dbSaveFav()" title="Save city to favorites" aria-label="Save to favorites"><i class="fas fa-star"></i></button>
+          <button class="db-tool-btn db-icon" onclick="shareWeather()" title="Share this forecast" aria-label="Share this forecast"><i class="fas fa-share-nodes"></i></button>
+          <div class="hc-search-inline">
+            <input type="text" id="cityIn" placeholder="Search a city…" aria-label="Search city" autocomplete="off"
+                   oninput="acDebounce(this.value)" onkeydown="if(event.key==='Enter')doSearch();else acKeyNav(event)">
+            <button onclick="doSearch()" aria-label="Search"><i class="fas fa-search"></i></button>
+            <div class="ac-list" id="acList"></div>
+            <div class="db-recent acrylic" onmousedown="event.preventDefault()"><div id="recentWrap"></div><div id="favWrap"></div></div>
+          </div>
+          </div>
+        <div class="hc-main">
+          <div class="hc-left">
+            <h1 class="hc-condition" id="heroCondName">—</h1>
+            <div class="hc-cat" id="heroCondCat">Weather</div>
+            <p class="hc-desc" id="heroCondDesc">Detecting your location and fetching atmospheric data…</p>
+          </div>
+          <div class="hc-right">
+            <div class="hc-temp"><span class="hc-temp-num" id="hTemp">--</span><sup class="hc-temp-sup">°</sup></div>
+            <div class="hc-wind-row"><i class="fas fa-wind"></i><span>Wind Status <strong id="heroWindKmh">--</strong></span>
+              <div class="db-seg" role="group" aria-label="Temperature unit">
+                <button class="unit-btn act" id="btnC" aria-pressed="true" onclick="setUnits('C');window.dbxRefresh&&dbxRefresh()">°C</button>
+                <button class="unit-btn" id="btnF" aria-pressed="false" onclick="setUnits('F');window.dbxRefresh&&dbxRefresh()">°F</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hc-forecast">
+          <div class="hcf-days" id="hcfDays">
+            <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+            <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+            <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+            <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+            <div class="hcf-day"><div class="hcf-day-name">—</div><div class="hcf-day-temp">--<sup>°</sup></div></div>
+          </div>
+          <div class="hcf-line-wrap">
+            <svg class="hcf-svg" id="hcfSvg" viewBox="0 0 1000 80" preserveAspectRatio="none"></svg>
+            <div class="hcf-circles" id="hcfCircles"></div>
+          </div>
+        </div>
+        <div class="db-detail-grid">
+          <div class="db-detail"><i class="fas fa-eye"></i><div class="dmc-val"><span id="cwV">--</span> km</div><div class="dmc-lbl">Visibility</div></div>
+          <div class="db-detail"><i class="fas fa-gauge"></i><div class="dmc-val" id="cwP">--</div><div class="dmc-lbl">Pressure</div></div>
+          <div class="db-detail"><i class="fas fa-cloud"></i><div class="dmc-val" id="cloudVal">--</div><div class="dmc-lbl">Cloud Cover</div></div>
+        </div>
+      </section>
+
+      <section class="db-view" id="view-map">
+        <div class="map-pills db-map-pills">
+          <button class="mp-btn act" onclick="setOv('wind',this)">Wind</button>
+          <button class="mp-btn" onclick="setOv('rain',this)">Rain</button>
+          <button class="mp-btn" onclick="setOv('temp',this)">Temp</button>
+          <button class="mp-btn" onclick="setOv('clouds',this)">Clouds</button>
+          <button class="mp-btn" onclick="setOv('pressure',this)">Pressure</button>
+        </div>
+        <div class="db-map-wrap acrylic">
+          <iframe id="wFrame" title="Storm map" loading="lazy"></iframe>
+        </div>
+      </section>
+
+      <!-- Remaining panels — built next -->
+      <section class="db-view" id="view-chart">
+        <div class="data-card acrylic" style="flex:1;display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.6rem">
+            <h4>Hourly Trend</h4>
+            <div style="display:flex;gap:.4rem">
+              <button class="ctog act" onclick="setChart('temp',this)">Temp</button>
+              <button class="ctog" onclick="setChart('humidity',this)">Humidity</button>
+              <button class="ctog" onclick="setChart('wind',this)">Wind</button>
+            </div>
+          </div>
+          <div class="db-chart-box"><canvas id="hrChart"></canvas></div>
+        </div>
+      </section>
+
+      <section class="db-view" id="view-hourly">
+        <div class="data-card acrylic">
+          <h4 style="margin-bottom:.9rem">Next Hours</h4>
+          <div class="hourly-scroll" id="hourlyTable"></div>
+        </div>
+      </section>
+
+      <section class="db-view" id="view-heat">
+        <div class="data-card acrylic" style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap">
+          <div style="text-align:center">
+            <div class="heat-circle" id="heatCircle">
+              <div><div class="heat-circle-val" id="heatFeelsVal">--</div><div class="heat-circle-unit">FEELS LIKE</div></div>
+            </div>
+            <div class="dmc-lbl">Feels Like</div>
+          </div>
+          <div>
+            <div class="dmc-val" style="font-size:1.6rem" id="heatCategory">--</div>
+            <div class="dmc-sub">Actual <span id="heatActual">--</span> · <span id="heatDiff">--</span></div>
+            <div class="mini-bar-track" style="margin-top:.8rem"><div class="mini-bar-fill" id="heatBar"></div></div><div class="db-scale"><span>Cool</span><span>Comfortable</span><span>Warm</span><span>Hot</span><span>Extreme</span></div>
+          </div>
+        </div>
+      
+        <div class="db-extra" id="xHeat">
+          <div class="dbx-card acrylic"><div class="dbx-head"><h4>Feels Like · Next 24 Hours</h4><span class="dbx-sub" id="xHeatSub"></span></div><div class="dbx-row" id="xHeatTiles"></div></div>
+          <div class="dbx-row dbx-row-wide" id="xHeatInfo"></div>
+        </div>
+      </section>
+
+      <section class="db-view" id="view-aqi">
+        <div class="data-card acrylic">
+          <h4 style="margin-bottom:.9rem">Air Quality Breakdown</h4>
+          <table class="data-table aqi-table" id="aqiTable"><tbody></tbody></table>
+        </div>
+      </section>
+
+      <section class="db-view" id="view-moon">
+        <div class="data-card acrylic db-center">
+          <div style="font-size:4rem;line-height:1" id="moonEmoji">🌙</div>
+          <div class="dmc-val" style="font-size:1.6rem;margin:1rem 0 .4rem" id="moonName">--</div>
+          <div class="dmc-sub" id="moonIllum">--</div>
+        </div>
+      
+        <div class="db-extra" id="xMoon">
+          <div class="dbx-card acrylic"><div class="dbx-head"><h4>Upcoming Phases</h4></div><div class="dbx-row" id="xMoonPhases"></div></div>
+          <div class="dbx-card acrylic"><div class="dbx-head"><h4>Next 7 Nights</h4></div><div class="dbx-row" id="xMoonWeek"></div></div>
+        </div>
+      </section>
+
+      <section class="db-view" id="view-astro">
+        <div class="db-detail-grid" style="grid-template-columns:repeat(2,1fr);margin-top:0">
+          <div class="db-detail"><i class="fas fa-sun"></i><div class="dmc-val" id="astroSunrise">--</div><div class="dmc-lbl">Sunrise</div></div>
+          <div class="db-detail"><i class="fas fa-moon"></i><div class="dmc-val" id="astroSunset">--</div><div class="dmc-lbl">Sunset</div></div>
+          <div class="db-detail"><i class="fas fa-clock"></i><div class="dmc-val" id="astroDayLen">--</div><div class="dmc-lbl">Day Length</div></div>
+          <div class="db-detail"><i class="fas fa-star"></i><div class="dmc-val" id="astroGolden">--</div><div class="dmc-lbl">Golden Hour</div></div>
+        </div>
+        <div class="data-card acrylic" style="margin-top:1rem;display:flex;align-items:center;gap:1.1rem">
+          <span id="astroMoonPhase" style="font-size:2.2rem">🌙</span>
+          <div><div class="dmc-val" id="astroMoonName">--</div><div class="dmc-sub" id="astroMoonIllum">--</div></div>
+        </div>
+      </section>
+
+      <section class="db-view" id="view-press">
+        <div class="data-card acrylic">
+          <div class="dmc-val" style="font-size:2.4rem" id="presshPa">--</div>
+          <div class="dmc-lbl">hPa · <span id="pressCat">--</span></div>
+          <div class="dmc-sub" style="margin-top:.6rem" id="pressSlp">--</div>
+          <div class="dmc-sub" id="pressImpl">--</div>
+          <div class="mini-bar-track" style="margin-top:1rem"><div class="mini-bar-fill" id="pressBar"></div></div><div class="db-scale"><span>Low</span><span>Normal</span><span>High</span></div>
+        </div>
+      
+        <div class="db-extra" id="xPress">
+          <div class="dbx-card acrylic">
+            <div class="dbx-head"><h4>Pressure · Next 48 Hours</h4><span class="dbx-badge" id="xPressBadge">--</span></div>
+            <svg class="dbx-chart" id="xPressSvg" viewBox="0 0 600 120" preserveAspectRatio="none"></svg>
+            <div class="db-scale"><span>Now</span><span>+24h</span><span>+48h</span></div>
+            <div class="dbx-note" id="xPressNote"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="db-view" id="view-solar">
+        <div class="data-card acrylic" style="text-align:center">
+          <svg viewBox="0 0 80 48" style="width:220px;margin:0 auto 1.2rem;display:block">
+            <path d="M4 44 A36 36 0 0 1 76 44" fill="none" stroke="var(--border-hi)" stroke-width="2"/>
+            <path id="arcFill" d="M4 44 A36 36 0 0 1 76 44" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="113" stroke-dashoffset="113"/>
+            <circle id="arcDot" cx="4" cy="44" r="3" fill="var(--gold)"/>
+          </svg>
+          <div class="db-detail-grid" style="grid-template-columns:repeat(2,1fr);margin-top:0">
+            <div><div class="dmc-val" id="srTimeLg">--</div><div class="dmc-lbl">Sunrise</div></div>
+            <div><div class="dmc-val" id="ssTimeLg">--</div><div class="dmc-lbl">Sunset</div></div>
+          </div>
+          <div class="dmc-sub" style="margin-top:.8rem">Day length: <span id="dayLenLg">--</span></div>
+        </div>
+      
+        <div class="db-extra" id="xSolar">
+          <div class="dbx-row dbx-row-wide" id="xSolarInfo"></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <footer class="acrylic">
+    <p>© 2026 skyLens Intelligence · Data by OpenWeather, Open-Meteo &amp; ECMWF · Images by Unsplash</p>
+    <div class="f-links"><a href="/dashboard.html">Dashboard</a><a href="/learn.html">Learn</a><a href="/about.html">About</a></div>
+  </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="/js/motion-dashboard.js"></script>
+<script>
+/* Dashboard extras (Heat / Moon / Pressure / Solar). Read-only add-on: it
+   wraps renderAll and only writes into its own dbx-* elements. Every part is
+   try/catch-guarded so a failure can never affect the rest of the page. */
+(function(){
+  function $(id){return document.getElementById(id)}
+  function put(id,h){var e=$(id);if(e)e.innerHTML=h}
+  function F(){return typeof units!=='undefined'&&units==='F'}
+  function U(t){return F()?Math.round(t*9/5+32):Math.round(t)}
+  function hr(ts,tz){var h=new Date((ts+tz)*1000).getUTCHours();return (h%12||12)+(h<12?' AM':' PM')}
+  function clock(ts,tz){return typeof fmtTime==='function'?fmtTime((ts+tz+new Date().getTimezoneOffset()*60)*1000):''}
+  function hm(sec){sec=Math.max(0,Math.round(sec/60));return Math.floor(sec/60)+'h '+(sec%60)+'m'}
+  var _c=null,_f=null;
+
+  function heat(c,f){
+    if(!f||!f.list||!f.list.length)return;
+    var tz=(f.city&&f.city.timezone)||c.timezone||0,L=f.list.slice(0,8),pk=L[0];
+    put('xHeatTiles',L.map(function(x){
+      if(x.main.feels_like>pk.main.feels_like)pk=x;
+      var fl=x.main.feels_like,col=fl>=33?'var(--storm)':fl>=28?'var(--gold)':'var(--ice)';
+      return '<div class="dbx-tile"><span class="dbx-t">'+hr(x.dt,tz)+'</span><b style="color:'+col+'">'+U(fl)+'°</b></div>';
+    }).join(''));
+    var fl=c.main.feels_like;
+    var adv=fl<0?'Bundle up and limit time outside':fl<10?'Wear warm layers':fl<18?'A light jacket helps':fl<24?'Comfortable for outdoor plans':fl<28?'Pleasant. Stay hydrated':fl<33?'Limit midday sun and drink water':'Avoid strenuous activity outdoors and hydrate';
+    put('xHeatInfo',
+      '<div class="db-detail"><i class="fas fa-temperature-high"></i><div class="dmc-val">'+U(pk.main.feels_like)+'° · '+hr(pk.dt,tz)+'</div><div class="dmc-lbl">Peak feels like</div></div>'+
+      '<div class="db-detail"><i class="fas fa-droplet"></i><div class="dmc-val">'+c.main.humidity+'%</div><div class="dmc-lbl">Humidity</div></div>'+
+      '<div class="db-detail"><i class="fas fa-circle-info"></i><div class="dmc-val" style="font-size:.88rem;line-height:1.3">'+adv+'</div><div class="dmc-lbl">Advice</div></div>');
+  }
+
+  function moon(){
+    if(typeof moonPhase!=='function')return;
+    var C=29.530588853,known=new Date(2000,0,6,18,14,0),now=new Date();
+    var p=((((now-known)/86400000)%C)+C)%C/C;
+    var T=[[0,'🌑','New Moon'],[.25,'🌓','First Quarter'],[.5,'🌕','Full Moon'],[.75,'🌗','Last Quarter']];
+    var ev=T.map(function(t){var d=(((t[0]-p)%1)+1)%1*C;return {e:t[1],n:t[2],d:d,dt:new Date(now.getTime()+d*86400000)}}).sort(function(a,b){return a.d-b.d});
+    put('xMoonPhases',ev.map(function(x){
+      var days=Math.round(x.d);
+      return '<div class="dbx-tile"><span class="dbx-em">'+x.e+'</span><span class="dbx-nm">'+x.n+'</span><span class="dbx-t">'+x.dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+(days<=0?'today':'in '+days+'d')+'</span></div>';
+    }).join(''));
+    var w='';
+    for(var i=0;i<7;i++){
+      var d=new Date(now.getTime()+i*86400000),m=moonPhase(d);
+      w+='<div class="dbx-tile"><span class="dbx-t">'+(i===0?'Today':d.toLocaleDateString('en-US',{weekday:'short'}))+'</span><span class="dbx-em">'+m.e+'</span><span class="dbx-t">'+m.i+'%</span></div>';
+    }
+    put('xMoonWeek',w);
+  }
+
+  function press(c,f){
+    if(!f||!f.list||f.list.length<3)return;
+    var P=[c.main.pressure].concat(f.list.slice(0,16).map(function(x){return x.main.pressure}));
+    var mn=Math.min.apply(null,P),mx=Math.max.apply(null,P),pad=Math.max(mx-mn,4)*.2,lo=mn-pad,hi=mx+pad;
+    var d=P.map(function(v,i){return (i?'L':'M')+(i/(P.length-1)*600).toFixed(1)+' '+(110-((v-lo)/(hi-lo))*100).toFixed(1)}).join(' ');
+    var svg=$('xPressSvg');
+    if(svg)svg.innerHTML='<path d="'+d+' L600 120 L0 120 Z" fill="rgba(104,176,228,.10)"/><path d="'+d+'" fill="none" stroke="var(--ice)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>';
+    var diff=P[Math.min(8,P.length-1)]-P[0],tr=diff>2?'Rising':diff<-2?'Falling':'Steady';
+    var sgn=diff>0?'+':diff<0?'−':'';
+    var b=$('xPressBadge');if(b)b.textContent=tr+' · '+sgn+Math.abs(Math.round(diff))+' hPa / 24h';
+    var note=tr==='Rising'?'Rising pressure usually brings clearer, calmer weather.':tr==='Falling'?'Falling pressure often means unsettled weather ahead.':'Little change expected, so current conditions should hold.';
+    var n=$('xPressNote');if(n)n.textContent=note+' Range '+Math.round(mn)+'–'+Math.round(mx)+' hPa.';
+  }
+
+  function solar(c){
+    if(!c||!c.sys||!c.sys.sunrise)return;
+    var tz=c.timezone||0,now=Date.now()/1000,sr=c.sys.sunrise,ss=c.sys.sunset,lab,t;
+    if(now<sr){lab='Until sunrise';t=sr-now}else if(now<ss){lab='Until sunset';t=ss-now}else{lab='Until sunrise';t=sr+86400-now}
+    put('xSolarInfo',
+      '<div class="db-detail"><i class="fas fa-hourglass-half"></i><div class="dmc-val">'+hm(t)+'</div><div class="dmc-lbl">'+lab+'</div></div>'+
+      '<div class="db-detail"><i class="fas fa-sun"></i><div class="dmc-val">'+clock((sr+ss)/2,tz)+'</div><div class="dmc-lbl">Solar noon</div></div>'+
+      '<div class="db-detail"><i class="fas fa-star"></i><div class="dmc-val">'+clock(ss-3600,tz)+'</div><div class="dmc-lbl">Evening golden hour</div></div>');
+  }
+
+  function run(c,f){
+    _c=c;_f=f;
+    [function(){heat(c,f)},moon,function(){press(c,f)},function(){solar(c)}].forEach(function(fn){
+      try{fn()}catch(e){console.warn('[skyLens] dashboard extra failed:',e)}
+    });
+  }
+  window.dbxRefresh=function(){try{if(_c)run(_c,_f)}catch(e){}};
+  try{moon()}catch(e){}
+  setInterval(function(){try{if(_c)solar(_c)}catch(e){}},60000);
+
+  var orig=window.renderAll;
+  if(typeof orig==='function'){
+    window.renderAll=function(c,f){
+      var r=orig.apply(this,arguments);
+      if(c&&c.main&&c.sys)run(c,f);
+      return r;
+    };
+  }
+})();
+</script>
+<script>
+/* Time is always shown in 12h: drop any saved 24h choice before app.js restores it. */
+try{localStorage.removeItem('sl_timefmt')}catch(e){}
+/* Toolbar helpers (alerts dropdown, save favorite). Logic for units, time
+   format, refresh, alerts and favorites already lives in app.js. */
+(function(){
+  var g=window.getRecent;
+  if(typeof g==='function')window.getRecent=function(){
+    return g().filter(function(c){return c&&c.name&&!/^(my location|current locat|detecting)/i.test(c.name)});
+  };
+})();
+function dbToggleAlerts(e){
+  if(e)e.stopPropagation();
+  var z=document.getElementById('alertZone');if(z)z.classList.toggle('show');
+}
+function dbSaveFav(){
+  var el=document.getElementById('hCity'),n=el?el.textContent.trim():'';
+  if(!n||/detecting/i.test(n))return;
+  if(typeof apiSaveFavorite!=='function')return;
+  apiSaveFavorite(n,lat,lon).catch(function(err){if(typeof showToast==='function')showToast(err.message||'Could not save','error')});
+}
+document.addEventListener('click',function(ev){
+  var z=document.getElementById('alertZone');
+  if(!z||!z.classList.contains('show'))return;
+  var path=ev.composedPath?ev.composedPath():[];
+  var inside=path.some(function(n){return n.classList&&n.classList.contains('db-bell-wrap')});
+  if(!inside)z.classList.remove('show');
+});
+document.addEventListener('keydown',function(ev){
+  if(ev.key==='Escape'){var z=document.getElementById('alertZone');if(z)z.classList.remove('show')}
+});
+</script>
+<script>
+/* Phone: keep the active view icon centred in the bottom strip */
+(function(){var r=document.querySelector('.feat-rail');if(!r)return;
+r.addEventListener('click',function(e){var b=e.target.closest('.feat-icon');if(!b||r.scrollWidth<=r.clientWidth)return;
+r.scrollTo({left:b.offsetLeft-r.clientWidth/2+b.offsetWidth/2,behavior:'smooth'})});
+r.addEventListener('click',function(e){if(e.target.closest('.feat-icon')&&window.innerWidth<=1000)window.scrollTo({top:0})});})();
+</script>
+</body>
+</html>

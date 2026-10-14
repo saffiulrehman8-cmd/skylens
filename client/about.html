@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="skyLens — Pro Weather Intelligence. About the platform, features, and technology.">
+<meta name="theme-color" content="#05091a">
+<link rel="manifest" href="/manifest.json">
+<title>About · skyLens</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234a8cc4'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='white'>☁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<style>
+/* ── About · premium pass (page-local; other pages unaffected) ── */
+/* Neutral accent: replaces the teal on this page only */
+:root{--teal:var(--ice)}
+.site-sidebar .logo-mark{background:linear-gradient(135deg,var(--blue),var(--ice));box-shadow:0 0 14px rgba(74,140,196,.25)}
+.about-v3 .ab2-eyebrow,.about-v3 .sec-lbl{color:rgba(255,255,255,.55)}
+.about-v3 .ab2-hero{grid-template-columns:minmax(0,1fr) 400px;gap:3rem;align-items:center;padding:2.2rem 3rem 4.5rem}
+.about-v3 .ab2-eyebrow{display:flex;align-items:center;gap:10px;font-size:var(--fs-label);letter-spacing:.16em;margin-bottom:1.4rem}
+.ab2-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);flex-shrink:0}
+.about-v3 .ab2-headline{font-size:var(--fs-display);line-height:1.08;letter-spacing:-.02em;margin-bottom:1.5rem}
+.ab2-dim{color:rgba(240,244,255,.5)}
+.about-v3 .ab2-tagline{max-width:560px;font-size:var(--fs-body-l);line-height:1.65;color:rgba(255,255,255,.64);margin-bottom:1.5rem}
+.about-v3 .ab2-version{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.55);margin-bottom:1.6rem}
+.about-v3 .ab2-btn{border-radius:14px;padding:.95rem 1.7rem}
+.about-v3 .ab2-btn-primary{background:rgba(240,244,255,.92);color:#0e1116;box-shadow:0 10px 28px rgba(255,255,255,.1)}
+.about-v3 .ab2-btn-primary:hover{box-shadow:0 12px 32px rgba(255,255,255,.18)}
+.about-v3 .ab2-btn-secondary{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.18)}
+
+.about-v3 .ab2-stats.acrylic{border-radius:28px;padding:1.9rem 2rem;gap:1.3rem}
+.about-v3 .ab2-stats-title{font-size:var(--fs-label);letter-spacing:.14em;color:rgba(255,255,255,.45);margin:0}
+.about-v3 .ab2-stat-row{gap:1.3rem;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.07)}
+.about-v3 .ab2-stats-title + .ab2-stat-row{border-top:0;padding-top:0}
+.about-v3 .ab2-stat-bar{width:4px;height:56px;background:var(--c);box-shadow:0 0 12px var(--c)}
+.about-v3 .ab2-stat-num{font-size:var(--fs-numeral);line-height:1;letter-spacing:-.01em}
+.about-v3 .ab2-stat-lbl{font-size:var(--fs-label);letter-spacing:.12em;color:rgba(255,255,255,.45)}
+.ab2-rings{position:absolute;inset:0;pointer-events:none;z-index:0}
+.ab2-rings i{position:absolute;top:20px;right:20px;border-radius:50%;border:1px solid rgba(255,255,255,.06);transform:translate(50%,-50%)}
+.ab2-rings i:nth-child(1){width:140px;height:140px}
+.ab2-rings i:nth-child(2){width:240px;height:240px;border-color:rgba(255,255,255,.045)}
+.ab2-rings i:nth-child(3){width:350px;height:350px;border-color:rgba(255,255,255,.03)}
+
+.about-v3 .sec-lbl{display:flex;align-items:center;gap:1.25rem;padding:0 3rem;margin:0 0 1.5rem;font-size:var(--fs-label);letter-spacing:.16em}
+.about-v3 .sec-lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+
+.about-v3 .ab2-cards{gap:1.25rem;padding:0 3rem 4.5rem}
+.about-v3 .ab2-card.acrylic{--c:var(--teal);border-radius:22px;padding:1.75rem 1.75rem 1.9rem;display:flex;flex-direction:column;gap:.9rem;transition:border-color .25s,transform .25s}
+.about-v3 .ab2-card.acrylic:nth-child(3n+2){--c:var(--gold)}
+.about-v3 .ab2-card.acrylic:nth-child(3n){--c:var(--storm)}
+.about-v3 .ab2-card.acrylic::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--c),transparent);opacity:.9;pointer-events:none}
+.about-v3 .ab2-card.acrylic:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.18)}
+.af-idx{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:var(--fs-label);color:var(--c);
+  background:rgba(255,255,255,.06);background:color-mix(in srgb,var(--c) 13%,transparent);border:1px solid rgba(255,255,255,.12);border:1px solid color-mix(in srgb,var(--c) 32%,transparent)}
+.about-v3 .ab2-card h4{font-size:var(--fs-h3);line-height:1.3;margin:.1rem 0 0}
+.about-v3 .ab2-card p{font-size:var(--fs-small);line-height:1.6;color:rgba(255,255,255,.58)}
+
+.ab3-stack.acrylic{margin:0 3rem 4rem;padding:2rem 2rem 2.2rem;border-radius:24px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2rem}
+.ab3-gh{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:var(--fs-label);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:.9rem}
+.ab3-gh::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--c)}
+.ab3-group .chips{flex-direction:column;align-items:flex-start;gap:10px}
+.ab3-group .chip{padding:7px 14px;font-size:var(--fs-label);color:rgba(255,255,255,.62);background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+
+@media (max-width:1100px){
+  .about-v3 .ab2-hero{grid-template-columns:1fr}
+  .about-v3 .ab2-cards{grid-template-columns:repeat(2,1fr)}
+  .ab3-stack.acrylic{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:700px){
+  .about-v3 .ab2-hero{padding:1.2rem 1.4rem 2.5rem}
+  .about-v3 .ab2-cards{grid-template-columns:1fr;padding:0 1.4rem 2.5rem}
+  .about-v3 .sec-lbl{padding:0 1.4rem}
+  .ab3-stack.acrylic{grid-template-columns:1fr;margin:0 1.4rem 2.5rem}
+}
+@media (prefers-reduced-motion:reduce){.about-v3 .ab2-card.acrylic:hover{transform:none}}
+
+.about-bg::after{background:linear-gradient(105deg,rgba(8,12,18,.8) 0%,rgba(8,12,18,.52) 45%,rgba(8,12,18,.74) 100%)}
+  :root{--page-glow:#c6b789}  /* sidebar glow colour, from this page's background */
+</style>
+<link rel="stylesheet" href="/css/premium.css">
+<link rel="preload" as="image" href="/assets/images/about-bg.webp" type="image/webp">
+</head>
+<body>
+<div class="dbp-bg about-bg" style="background-image:url('/assets/images/about-bg.webp')"></div>
+
+<!-- ══ Sidebar — expanded on About/Hub/Learn (collapses only on Dashboard) ══ -->
+<nav class="site-sidebar" aria-label="Main navigation">
+  <a href="index.html" class="logo-mark" aria-label="skyLens home"><i class="fas fa-meteor"></i></a>
+  <a href="index.html" class="site-nav-icon" aria-label="Hub"><i class="fas fa-house"></i><span class="snl">Hub</span></a>
+  <a href="dashboard.html" class="site-nav-icon" aria-label="Dashboard"><i class="fas fa-gauge-high"></i><span class="snl">Dashboard</span></a>
+  <a href="learn.html" class="site-nav-icon" aria-label="Learn"><i class="fas fa-book-open"></i><span class="snl">Learn</span></a>
+  <a href="about.html" class="site-nav-icon act" aria-current="page" aria-label="About"><i class="fas fa-circle-info"></i><span class="snl">About</span></a>
+  <div class="site-sidebar-spacer"></div>
+  <div class="site-sidebar-bottom">
+    <button class="site-nav-icon" id="authHeaderBtn" onclick="openAuthModal('login')" aria-label="Log in or sign up"><i class="fas fa-user"></i></button>
+  </div>
+</nav>
+
+<div class="page-shell about-v3">
+
+  <div class="page-topbar">
+    <!-- Utility controls only — primary nav lives in the sidebar -->
+  </div>
+
+  <!-- ══ Hero ══ -->
+  <section class="ab2-hero">
+    <div>
+      <div class="ab2-eyebrow"><span class="ab2-dot"></span>// About SkyLens</div>
+      <h1 class="ab2-headline">Weather intelligence,<br><span class="ab2-dim">built to be understood.</span></h1>
+      <p class="ab2-tagline">An experimental weather visualization platform bridging raw meteorological data and human-centric design. Every element is intentional — built for professionals and enthusiasts who demand precision.</p>
+      <div class="ab2-version"><i class="fas fa-code-branch"></i> v2 · Rebuilt 2026</div>
+      <div class="ab2-cta">
+        <a href="dashboard.html" class="ab2-btn ab2-btn-primary"><i class="fas fa-gauge-high"></i> Open Dashboard</a>
+        <a href="learn.html" class="ab2-btn ab2-btn-secondary"><i class="fas fa-book-open"></i> Explore Encyclopedia</a>
+      </div>
+    </div>
+
+    <aside class="ab2-stats acrylic" aria-label="Platform stats">
+      <span class="ab2-rings" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div class="ab2-stats-title">Platform at a glance</div>
+      <div class="ab2-stat-row">
+        <div class="ab2-stat-bar" style="--c:var(--ice)"></div>
+        <div class="ab2-stat-info"><span class="ab2-stat-num">13</span><span class="ab2-stat-lbl">Learn Topics</span></div>
+      </div>
+      <div class="ab2-stat-row">
+        <div class="ab2-stat-bar" style="--c:var(--gold)"></div>
+        <div class="ab2-stat-info"><span class="ab2-stat-num">10</span><span class="ab2-stat-lbl">Dashboard Views</span></div>
+      </div>
+      <div class="ab2-stat-row">
+        <div class="ab2-stat-bar" style="--c:var(--storm)"></div>
+        <div class="ab2-stat-info"><span class="ab2-stat-num">5</span><span class="ab2-stat-lbl">Map Layers</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ══ Feature cards ══ -->
+  <div class="sec-lbl">// Platform Features</div>
+  <section class="ab2-cards">
+    <div class="ab2-card acrylic"><span class="af-idx">01</span><h4>Live Weather Data</h4><p>Real-time conditions, 10-day forecast, UV Index, AQI breakdown, dew point — all parallel-fetched from open APIs.</p></div>
+    <div class="ab2-card acrylic"><span class="af-idx">02</span><h4>ECMWF Storm Maps</h4><p>Wind, rain, temperature, clouds and pressure overlays powered by Windy's European Centre forecast model.</p></div>
+    <div class="ab2-card acrylic"><span class="af-idx">03</span><h4>Interactive Charts</h4><p>Switchable 24h trend charts for temperature, humidity, and wind speed with live data from 3-hour intervals.</p></div>
+    <div class="ab2-card acrylic"><span class="af-idx">04</span><h4>Smart Advisories</h4><p>Contextual weather alerts — extreme heat, high UV, poor air quality, high winds, low visibility, and more.</p></div>
+    <div class="ab2-card acrylic"><span class="af-idx">05</span><h4>City Autocomplete</h4><p>Instant city suggestions as you type, recent searches saved locally, and geolocation on page load.</p></div>
+    <div class="ab2-card acrylic"><span class="af-idx">06</span><h4>Saved Accounts</h4><p>Create an account to save up to 10 favorite cities, synced securely to your profile via JWT authentication.</p></div>
+  </section>
+
+  <!-- ══ Technology stack ══ -->
+  <div class="sec-lbl">// Technology Stack</div>
+  <section class="ab3-stack acrylic" aria-label="Technology stack">
+    <div class="ab3-group" style="--c:var(--ice)"><div class="ab3-gh">Backend</div><div class="chips">
+      <span class="chip">Node.js + Express API</span><span class="chip">MongoDB Atlas</span><span class="chip">JWT Authentication</span></div></div>
+    <div class="ab3-group" style="--c:var(--gold)"><div class="ab3-gh">Data &amp; APIs</div><div class="chips">
+      <span class="chip">OpenWeatherMap API</span><span class="chip">Open-Meteo UV + 10-day</span><span class="chip">Windy ECMWF Embed</span><span class="chip">City Autocomplete (OWM Geo)</span></div></div>
+    <div class="ab3-group" style="--c:var(--storm)"><div class="ab3-gh">Visuals &amp; Logic</div><div class="chips">
+      <span class="chip">Chart.js v4</span><span class="chip">Moon Phase Engine</span><span class="chip">Solar Arc Calculation</span><span class="chip">AQI Pollutant Breakdown</span></div></div>
+    <div class="ab3-group" style="--c:var(--blue)"><div class="ab3-gh">Experience</div><div class="chips">
+      <span class="chip">Smart Weather Alerts</span><span class="chip">°C/°F Unit Toggle</span><span class="chip">Keyboard Shortcuts</span><span class="chip">Session Caching</span></div></div>
+  </section>
+
+  <footer>
+    <p>© 2026 skyLens Intelligence · Data by OpenWeather, Open-Meteo &amp; ECMWF · Images by Unsplash</p>
+    <div class="f-links"><a href="/dashboard.html">Dashboard</a><a href="/learn.html">Learn</a><a href="/about.html">About</a></div>
+  </footer>
+
+</div>
+
+<script src="/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="/js/motion.js"></script>
+</body>
+</html>

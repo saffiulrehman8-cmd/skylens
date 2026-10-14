@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Cards — Morphism Preview · skyLens</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700;800&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  body{padding:3rem}
+  .dbp-row{display:flex;gap:1.2rem;flex-wrap:wrap}
+  .dbp-note{max-width:640px;margin:0 auto 2.5rem;text-align:center;color:var(--muted);
+    font-size:.85rem;font-family:'JetBrains Mono',monospace}
+  .dbp-note b{color:var(--text-hi)}
+</style>
+</head>
+<body>
+
+<div class="dbp-bg" style="background-image:url('/assets/images/fog-dashboard-bg.jpg')"></div>
+
+<p class="dbp-note">Preview only — testing <b>acrylic</b> (blur+grain, base everywhere) vs
+<b>acrylic + droplet</b> (moisture accent) side by side against the fog/river reference photo.</p>
+
+<div class="dbp-row" style="justify-content:center">
+
+  <!-- LEFT: acrylic + droplet (this is a moisture-topic page, so it gets the accent) -->
+  <div class="dbp-panel acrylic droplet">
+    <div class="dbp-loc"><i class="fas fa-location-dot"></i> Oklahoma City, USA</div>
+    <div class="dbp-temp">20°<small>±3° · 9.8% humidity</small></div>
+    <div class="dbp-wind"><i class="fas fa-wind"></i> Wind: WSW 6 mph</div>
+    <hr style="border-color:var(--border);margin:.2rem 0">
+    <div>
+      <div class="dbp-aqi-title">Air Quality</div>
+      <div class="dbp-aqi-scale"></div>
+      <div class="dbp-aqi-legend"><span><i class="fas fa-circle"></i> Safe · 0–0.9%</span><span>Dangerous · 39–90% <i class="fas fa-circle"></i></span></div>
+    </div>
+    <hr style="border-color:var(--border);margin:.2rem 0">
+    <div>
+      <div class="dbp-chart-title">Temp Trend</div>
+      <div class="dbp-chart-val">21°<small style="font-size:.9rem;color:var(--muted)"> current</small></div>
+    </div>
+    <div class="dbp-loc-foot">Oklahoma City — air quality generally acceptable; sensitive groups may notice mild effects from long-term exposure.</div>
+  </div>
+
+  <!-- RIGHT: same panel, acrylic only, no droplets — for comparison -->
+  <div class="dbp-panel acrylic">
+    <div class="dbp-loc"><i class="fas fa-location-dot"></i> Oklahoma City, USA</div>
+    <div class="dbp-temp">20°<small>±3° · 9.8% humidity</small></div>
+    <div class="dbp-wind"><i class="fas fa-wind"></i> Wind: WSW 6 mph</div>
+    <hr style="border-color:var(--border);margin:.2rem 0">
+    <div>
+      <div class="dbp-aqi-title">Air Quality</div>
+      <div class="dbp-aqi-scale"></div>
+      <div class="dbp-aqi-legend"><span><i class="fas fa-circle"></i> Safe · 0–0.9%</span><span>Dangerous · 39–90% <i class="fas fa-circle"></i></span></div>
+    </div>
+    <hr style="border-color:var(--border);margin:.2rem 0">
+    <div>
+      <div class="dbp-chart-title">Temp Trend</div>
+      <div class="dbp-chart-val">21°<small style="font-size:.9rem;color:var(--muted)"> current</small></div>
+    </div>
+    <div class="dbp-loc-foot">Oklahoma City — air quality generally acceptable; sensitive groups may notice mild effects from long-term exposure.</div>
+  </div>
+
+</div>
+
+</body>
+</html>

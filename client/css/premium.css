@@ -1,0 +1,62 @@
+/* ── SkyLens · premium system (mirrors the Figma "SkyLens · Design System" page) ──
+   Linked on site pages only (Hub, About, Learn, 13 topics). NOT on the Dashboard. */
+:root{
+  /* type scale */
+  --fs-display:clamp(2.5rem,4.2vw,3.5rem);
+  --fs-h1:clamp(2rem,3.4vw,2.75rem);
+  --fs-h2:clamp(1.6rem,2.4vw,2rem);
+  --fs-h3:1.25rem;
+  --fs-h4:1rem;
+  --fs-body-l:1.0625rem;
+  --fs-body:.9375rem;
+  --fs-small:.875rem;
+  --fs-label:.75rem;
+  --fs-micro:.6875rem;
+  --fs-numeral:3rem;
+  /* layout */
+  --container:1280px;
+  --gutter:3rem;
+  --section-gap:5rem;
+  /* radius */
+  --r-chip:10px;--r-control:14px;--r-card:22px;--r-panel:28px;
+}
+@media (max-width:1100px){:root{--gutter:1.5rem}}
+@media (max-width:700px){:root{--gutter:1rem}}
+
+/* rendering polish */
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
+
+/* container: content never stretches past 1280 on wide screens */
+.page-shell>:is(.ab2-hero,.sec-lbl,.ab2-cards,.lrn-top,.lrn-grid,.sth-grid,.sth-quiz-wrap,.sth-nav,.sth-back-wrap){
+  max-width:calc(var(--container) + 2*var(--gutter));margin-inline:auto;width:100%}
+.ab3-stack.acrylic{width:min(var(--container),calc(100% - 2*var(--gutter)));margin-inline:auto}
+
+/* type floor: nothing on a site page is smaller than 11px */
+.notif-badge{font-size:.6875rem}
+.unit-btn{font-size:.6875rem}
+.ac-country{font-size:.6875rem}
+.rc-lbl{font-size:.6875rem}
+.rc-del{font-size:.6875rem}
+.hc-uv-badge{font-size:.6875rem}
+.hcf-day-name{font-size:.6875rem}
+.sec-lbl{font-size:.75rem}
+.heat-circle-unit{font-size:.6875rem}
+.aqi-table .at-unit{font-size:.6875rem}
+.aqi-table .at-status{font-size:.6875rem}
+.ctog{font-size:.6875rem}
+.f10-lo{font-size:.6875rem}
+.f10-rain{font-size:.6875rem}
+.hr-time{font-size:.6875rem}
+.hr-pop{font-size:.6875rem}
+.mp-btn{font-size:.6875rem}
+.fc-pop{font-size:.6875rem}
+.fc-pop i{font-size:.6875rem}
+.chip{font-size:.6875rem}
+footer p{font-size:.6875rem}
+.f-links a{font-size:.6875rem}
+.site-nav-icon .snl{font-size:.6875rem}
+.ab2-stats-title{font-size:.6875rem}
+.ab2-stat-lbl{font-size:.6875rem}
+.sth-nav-lbl{font-size:.6875rem}
