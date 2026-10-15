@@ -285,6 +285,15 @@
   .db-bell-wrap .alert-zone.acrylic{position:absolute;top:calc(100% + 10px);left:0;width:min(380px,80vw);max-height:60vh;overflow-y:auto;overflow-x:hidden;padding:.8rem;gap:.6rem;z-index:40;background:linear-gradient(150deg,#4a4f52,#363b40)}
   .db-bell-wrap .alert-zone:empty::before{content:'No active alerts for this location';position:static;opacity:1;font-size:.8rem;color:var(--muted);padding:.3rem .4rem;background:none}
   .db-bell-wrap .alert-banner,.db-bell-wrap .alert-banner.warn,.db-bell-wrap .alert-banner.danger,.db-bell-wrap .alert-banner.info{background:rgba(255,255,255,.07);backdrop-filter:blur(6px);border:1px solid var(--border-hi);border-radius:var(--r);padding:.8rem 1rem;animation:none}
+  /* Phones/tablets: the bell sits near the right edge, so a left-aligned dropdown ran off-screen.
+     Anchor the alerts card to the whole top row instead and let it span its width. */
+  @media (max-width:700px){
+    #view-weather .hc-top{position:relative}
+    .db-bell-wrap{position:static}
+    .db-bell-wrap .alert-zone.acrylic{left:0;right:0;width:auto;max-width:100%;box-sizing:border-box;top:calc(100% + 8px)}
+    .db-bell-wrap .alert-banner{min-width:0}
+    .db-bell-wrap .ab-desc{overflow-wrap:anywhere}
+  }
 
   /* Recent + favorite cities: popover under the search box, only while it is
      focused and empty. Chips are re-styled because ".hc-search-inline button"

@@ -101,12 +101,25 @@ window.addEventListener('DOMContentLoaded',()=>{
       lat=sl;lon=sn;loadMap();fetchW(lat,lon,(qp.get('city')||'Shared location').slice(0,60));
     } else {
     loadMap();
+    // Speed: if we already know where this browser was last time, load that weather
+    // straight away instead of waiting for the (slow) location lookup. The lookup still
+    // runs in the background and reloads only if the position really changed.
+    let _lp=null;
+    try{_lp=JSON.parse(localStorage.getItem('sl_lastpos')||'null')}catch(e){}
+    const _hasLP=_lp&&isFinite(_lp.lat)&&isFinite(_lp.lon);
+    if(_hasLP){lat=_lp.lat;lon=_lp.lon;loadMap();fetchW(lat,lon,'My Location')}
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(
-        pos=>{lat=pos.coords.latitude;lon=pos.coords.longitude;loadMap();fetchW(lat,lon,'My Location')},
-        ()=>fetchW(lat,lon,'Islamabad')
+        pos=>{
+          const nl=pos.coords.latitude,no=pos.coords.longitude;
+          try{localStorage.setItem('sl_lastpos',JSON.stringify({lat:nl,lon:no}))}catch(e){}
+          if(_hasLP&&Math.abs(nl-lat)<0.1&&Math.abs(no-lon)<0.1)return; // same place, already loaded
+          lat=nl;lon=no;loadMap();fetchW(lat,lon,'My Location')
+        },
+        ()=>{if(!_hasLP)fetchW(lat,lon,'Islamabad')},
+        {enableHighAccuracy:false,timeout:6000,maximumAge:3600000}
       );
-    } else fetchW(lat,lon,'Islamabad');
+    } else if(!_hasLP) fetchW(lat,lon,'Islamabad');
     }
   }
 });
@@ -239,13 +252,18 @@ async function fetchW(lt,ln,hint){
   }
   try{
     const safe = (p, fallback=null) => p.catch(()=>fallback);
-    const[c,f,meteo,pol,f10]=await Promise.all([
+    const _pa=[
       fetch(`/api/weather?lat=${lt}&lon=${ln}`).then(r=>r.ok?r.json():Promise.reject(r)),
       fetch(`/api/forecast?lat=${lt}&lon=${ln}`).then(r=>r.ok?r.json():Promise.reject(r)),
       safe(fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${ln}&hourly=uv_index&timezone=auto&forecast_days=1`).then(r=>r.json()), {}),
       safe(fetch(`/api/aqi?lat=${lt}&lon=${ln}`).then(r=>r.json()), {list:[]}),
       safe(fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${ln}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=auto&forecast_days=10`).then(r=>r.ok?r.json():Promise.reject(r)).catch(()=>new Promise(res=>setTimeout(res,800)).then(()=>fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${ln}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=auto&forecast_days=10`)).then(r=>r.json())), null)
-    ]);
+    ];
+    // Core data (current + forecast) first: paint the hero immediately
+    const[c,f]=await Promise.all([_pa[0],_pa[1]]);
+    try{renderHero(c);renderHeroForecast(f)}catch(_e){}
+    // Extras (UV, air quality, 10-day) can arrive later without blocking the hero
+    const[meteo,pol,f10]=await Promise.all([_pa[2],_pa[3],_pa[4]]);
     _fore=f;
     let realUV=0;
     if(meteo.hourly&&Array.isArray(meteo.hourly.uv_index))realUV=Math.max(...meteo.hourly.uv_index.map(v=>parseFloat(v)||0));
